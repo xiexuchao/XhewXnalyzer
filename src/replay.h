@@ -1,22 +1,6 @@
 #ifndef _REPLAY_H
 #define _REPLAY_H
 
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/time.h>
-#include <aio.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <linux/fs.h>
-#include <errno.h>
-#include <pthread.h>
-//#include <signal.h>
-//#include <sys/types.h>
-//#include <sys/stat.h>
-
 #define BUFSIZE	300
 
 #define MEM_ALIGN		512  // Memory alignment

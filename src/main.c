@@ -1,6 +1,6 @@
 #include "pool.h"
 
-void main()
+int main()
 {
 	char path_i[100]="F:\\MSR Trace\\";
 	char path_o[100]="F:\\MSR Trace\\results\\";
@@ -19,4 +19,5 @@ void main()
 	pool_run(strcat(strcpy(path_source,path_i),"backup5.ascii"),"config.txt",strcat(strcpy(path_target,path_o),"backup5.txt"),"log.txt");
 	pool_run(strcat(strcpy(path_source,path_i),"backup14.ascii"),"config.txt",strcat(strcpy(path_target,path_o),"backup14.txt"),"log.txt");
 	pool_run(strcat(strcpy(path_source,path_i),"backup15.ascii"),"config.txt",strcat(strcpy(path_target,path_o),"backup15.txt"),"log.txt");*/
+	return 1;
 }

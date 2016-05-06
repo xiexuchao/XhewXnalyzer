@@ -1,6 +1,6 @@
 #include "pool.h"
 
-void pool_run(char *trace,char *config,char *output,char *log)
+void pool_run(char *traceName,char *configName,char *outputName,char *logName)
 {
 	unsigned int chk_id;
 	struct pool_info *pool;
@@ -20,8 +20,8 @@ void pool_run(char *trace,char *config,char *output,char *log)
 	alloc_assert(pool,"pool");
 	memset(pool,0,sizeof(struct pool_info));
 
-	load_parameters(pool,config);
-	initialize(pool,trace,output,log);
+	load_parameters(pool,configName);
+	initialize(pool,traceName,outputName,logName);
 	warmup(pool);
 
 	/***************************/
@@ -37,14 +37,14 @@ void pool_run(char *trace,char *config,char *output,char *log)
 	{
 		/********************************************/
 		chk_id=(int)(pool->req->lba/(pool->size_chk*2048));
-		req->pcn=pool->mapTab[chk_id];
+		req->pcn=pool->mapTab[chk_id].pcn;
 		if(req->pcn<0)
 		{
 			printf("Error in lcn<->pcn mapping\n");
 			exit(-1);
 		}
 		req->lba=req->pcn*pool->size_chk*2048
-					+pool->req-lba%(pool->size_chk*2014);
+					+pool->req->lba%(pool->size_chk*2014);
 		/**push current IO req to the replay queue**/
 		trace->inNum++;	//track the process of IO requests
 		req->time=pool->req->time;	//us

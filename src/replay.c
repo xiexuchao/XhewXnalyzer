@@ -1,11 +1,10 @@
 #include "pool.h"
-
 void replay(struct pool_info *pool,struct trace_info *trace)
 {
 	int fd[10];
 	char *buf;
 	int i;
-	long long initTime,nowTime,reqTime,waitTime;
+	long long initTime,nowTime,reqTime;//,waitTime;
 
 	struct req_info *req;
 	req=(struct req_info *)malloc(sizeof(struct req_info));
@@ -82,7 +81,7 @@ void replay(struct pool_info *pool,struct trace_info *trace)
 	free(req);
 }
 
-static void handle_aio(sigval_t sigval)
+void handle_aio(sigval_t sigval)
 {
 	struct aiocb_info *cb;
 	int latency;
@@ -127,7 +126,7 @@ static void handle_aio(sigval_t sigval)
 	free(cb);
 }
 
-static void submit_aio(int fd, void *buf, struct req_info *req,struct trace_info *trace)
+void submit_aio(int fd, void *buf, struct req_info *req,struct trace_info *trace)
 {
 	struct aiocb_info *cb;
 	char *buf_new;
@@ -191,7 +190,7 @@ static void submit_aio(int fd, void *buf, struct req_info *req,struct trace_info
 	}
 }
 
-static void init_aio()
+void init_aio()
 {
 	struct aioinit aioParam={0};
 	//memset(aioParam,0,sizeof(struct aioinit));

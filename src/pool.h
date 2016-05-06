@@ -1,10 +1,22 @@
 #ifndef _POOL_H
 #define _POOL_H
 
+#define _GNU_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <sys/time.h>
+#include <aio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <linux/fs.h>
+#include <errno.h>
+#include <pthread.h>
+//#include <signal.h>
+//#include <sys/types.h>
+//#include <sys/stat.h>
 
 #include "detector.h"
 #include "migration.h"

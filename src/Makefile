@@ -8,10 +8,10 @@ CC = gcc
 CFLAGS = -g -Wall
 
 ${TARGET}:${OBJ}
-	@$(CC) $(OBJ) -o $@
+	@$(CC) $(OBJ) -o $@ -lrt
 
 ${DIR_OBJ}/%.o:${DIR_SRC}/%.c
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@ -lrt
 
 .PHONY:all clean
 clean:
