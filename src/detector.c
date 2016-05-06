@@ -1,4 +1,4 @@
-#include "detector.h"
+#include "pool.h"
 
 //Sequential IO Detection
 void seq_detect(struct pool_info *pool)

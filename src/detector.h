@@ -1,8 +1,6 @@
 #ifndef _DETECTOR_H
 #define _DETECTOR_H
 
-#include "pool.h"
-
 /*Sequential Accesses Detection*/
 struct stream_info{
 	unsigned int chk_id;
