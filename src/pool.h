@@ -223,8 +223,10 @@ void alloc_assert(void *p,char *s);
 //map.c
 int find_free(struct pool_info *pool,int type);
 void update_map(struct pool_info *pool,int i);
-
+//recognition.c
 void pool_run(char *trace,char *config,char *output,char *log);
 void pattern_recognize(struct pool_info *pool);
-
+//detector.c
+void seq_detect(struct pool_info *pool);
+void stream_flush(struct pool_info *pool);
 #endif

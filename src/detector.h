@@ -12,7 +12,4 @@ struct stream_info{
 	long long time;		//time when the first req arrived
 };
 
-void seq_detect(struct pool_info *pool);
-void stream_flush(struct pool_info *pool);
-
 #endif

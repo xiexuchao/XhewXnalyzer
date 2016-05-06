@@ -17,8 +17,6 @@
 //#include <sys/types.h>
 //#include <sys/stat.h>
 
-#define SUCCESS 1
-#define FAILURE 0
 #define BUFSIZE	300
 
 #define MEM_ALIGN		512  // Memory alignment
@@ -70,9 +68,9 @@ struct aiocb_info{
 void replay(struct pool_info *pool,struct trace_info *trace);
 long long time_now();
 long long time_elapsed(long long begin);
-static void handle_aio(sigval_t sigval);
-static void submit_aio(int fd, void *buf,struct req_info *req,struct trace_info *trace);
-static void init_aio();
+void handle_aio(sigval_t sigval);
+void submit_aio(int fd, void *buf,struct req_info *req,struct trace_info *trace);
+void init_aio();
 
 //queue.c
 void queue_push(struct trace_info *trace,struct req_info *req);

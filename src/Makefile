@@ -1,9 +1,6 @@
-DIR_SRC = ./src
-DIR_OBJ = ./src
-
-SRC = $(wildcard ${DIR_SRC}/*.c)
+SRC = $(wildcard *.c)
 DIR = $(notdir ${SRC})
-OBJ = $(patsubst %.c,${DIR_OBJ}/%.o,$(notdir ${SRC}))
+OBJ = $(patsubst %.c,%.o,$(notdir ${SRC}))
 
 TARGET = main
 
@@ -18,7 +15,7 @@ ${DIR_OBJ}/%.o:${DIR_SRC}/%.c
 
 .PHONY:all clean
 clean:
-	rm -rf ${DIR_OBJ}/*.o
+	rm -rf *.o
 	rm -rf ${TARGET}
 all:
 	@echo $(SRC)

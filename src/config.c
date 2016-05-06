@@ -87,7 +87,7 @@ void load_parameters(struct pool_info *pool,char *config)
 			sscanf(buf+value,"%s",pool->device[pool->deviceNum]);
 			pool->deviceNum++;
 		}
-		else if(strcmp(line,"replay log")==0)
+		else if(strcmp(buf,"replay log")==0)
 		{
 			sscanf(buf+value,"%s",pool->logFileName);
 		}
