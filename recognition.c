@@ -2,9 +2,19 @@
 
 void pool_run(char *trace,char *config,char *output,char *log)
 {
+	unsigned int chk_id;
 	struct pool_info *pool;
-	/*for trace replayer*/
 
+	/*for trace replayer*/
+	struct trace_info *trace; 
+	struct req_info *req;
+	trace=(struct trace_info *)malloc(sizeof(struct trace_info));
+	alloc_assert(trace,"trace");
+	memset(trace,0,sizeof(struct trace_info));
+	
+	req=(struct req_info *)malloc(sizeof(struct req_info));
+	alloc_assert(req,"req");
+	memset(req,0,sizeof(struct req_info));
 
 	pool=(struct pool_info *)malloc(sizeof(struct pool_info));
 	alloc_assert(pool,"pool");
@@ -14,8 +24,36 @@ void pool_run(char *trace,char *config,char *output,char *log)
 	initialize(pool,trace,output,log);
 	warmup(pool);
 
+	/***************************/
+	//initialize trace parameters
+	//trace here is a list of I/O requests pending to replay
+	trace->inNum=0;
+	trace->outNum=0;
+	trace->latencySum=0;
+	trace->logFile=fopen(pool->logFileName,"w");
+	/***************************/
+
 	while(get_request(pool)!=FAILURE)
-	{			
+	{
+		/********************************************/
+		chk_id=(int)(pool->req->lba/(pool->size_chk*2048));
+		req->pcn=pool->mapTab[chk_id];
+		if(req->pcn<0)
+		{
+			printf("Error in lcn<->pcn mapping\n");
+			exit(-1);
+		}
+		req->lba=req->pcn*pool->size_chk*2048
+					+pool->req-lba%(pool->size_chk*2014);
+		/**push current IO req to the replay queue**/
+		trace->inNum++;	//track the process of IO requests
+		req->time=pool->req->time;	//us
+		req->lba =pool->req->lba * BYTE_PER_BLOCK;
+		req->size=pool->req->size * BYTE_PER_BLOCK;
+		req->type=pool->req->type;
+		queue_push(trace,req);
+		/********************************************/
+
 		seq_detect(pool);	//Sequential IO Detection
 		stat_update(pool);
 
@@ -55,6 +93,13 @@ void pool_run(char *trace,char *config,char *output,char *log)
 	free(pool->stream);
 	free(pool->record_win);
 	free(pool->record_all);
+
+	/**start replay**/
+	replay(pool,trace);
+	free(req);
+	free(trace);
+	/****************/
+
 	free(pool);
 }
 

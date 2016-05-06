@@ -9,7 +9,8 @@ void load_parameters(struct pool_info *pool,char *config)
     memset(buf,0,sizeof(char)*SIZE_BUFFER);
     strcpy(pool->filename_config,config);
     pool->file_config=fopen(pool->filename_config,"r");
-
+	
+	pool->deviceNum=0;
     while(fgets(buf,sizeof(buf),pool->file_config))
     {
         if(buf[0]=='#'||buf[0]==' ') 
@@ -80,6 +81,15 @@ void load_parameters(struct pool_info *pool,char *config)
 		else if(strcmp(buf,"size of stride")==0)
 		{
 			sscanf(buf+value,"%d",&pool->size_stride);
+		}
+		else if(strcmp(buf,"device")==0)
+		{
+			sscanf(buf+value,"%s",pool->device[pool->deviceNum]);
+			pool->deviceNum++;
+		}
+		else if(strcmp(line,"replay log")==0)
+		{
+			sscanf(buf+value,"%s",pool->logFileName);
 		}
         memset(buf,0,sizeof(char)*SIZE_BUFFER);
     }

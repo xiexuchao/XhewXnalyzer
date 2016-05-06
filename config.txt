@@ -1,0 +1,23 @@
+#Config File
+
+size of scm = 10;		#GB
+size of ssd = 100;
+size of hdd = 51200;
+size of chk = 128;		#MB
+
+window size = 60;		#Min(TIME)
+
+threshold rw  = 0.5;	#R/W
+threshold cbr = 0.8;
+threshold car = 0.6;
+threshold seq = 512;	#Blocks
+
+threshold inactive = 5;
+threshold intensive = 2;
+
+size of stream = 32;
+size of stride = 0;		#Blocks
+
+device = /dev/sdb;
+device = /dev/sdd;
+replay log = logrep.txt;#record latency

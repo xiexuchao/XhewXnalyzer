@@ -151,6 +151,11 @@ struct pool_info{
     FILE *file_config;
     FILE *file_log;
 
+	//for replay engine
+	char device[10][64];
+	int  deviceNum;
+	char logFileName[64];
+
 	struct map_info		*mapTab;
 	struct map_info		*revTab;
     struct chunk_info	*chunk;
@@ -191,7 +196,7 @@ struct chunk_info{
 };
 
 struct request_info{
-    long long time;
+	long long time;
     long long lba;
     unsigned int type;//0->Read,1->Write
     unsigned int size;

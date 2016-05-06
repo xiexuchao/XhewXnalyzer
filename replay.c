@@ -1,50 +1,36 @@
 #include "pool.h"
-void main(int argc, char *argv[])
-{
-	replay(argv[1]);
-}
 
-void replay(char *configName)
+void replay(struct pool_info *pool,struct trace_info *trace)
 {
-	struct config_info *config;
-	struct trace_info *trace;
-	struct req_info *req;
 	int fd[10];
 	char *buf;
 	int i;
 	long long initTime,nowTime,reqTime,waitTime;
-	
-	config=(struct config_info *)malloc(sizeof(struct config_info));
-	memset(config,0,sizeof(struct config_info));
-	trace=(struct trace_info *)malloc(sizeof(struct trace_info));
-	memset(trace,0,sizeof(struct trace_info));
+
+	struct req_info *req;
 	req=(struct req_info *)malloc(sizeof(struct req_info));
+	alloc_assert(req,"req");
 	memset(req,0,sizeof(struct req_info));
-
-	config_read(config,configName);
-	printf("starting warm up with config %s----\n",configName);
-	trace_read(config,trace);
-	printf("starting replay IO trace %s----\n",config->traceFileName);
-
+	
 	//queue_print(trace);
 	//printf("trace->inNum=%d\n",trace->inNum);
 	//printf("trace->outNum=%d\n",trace->outNum);
 	//printf("trace->latencySum=%lld\n",trace->latencySum);
 
-	printf("config->devNum=%d\n",config->deviceNum);
-	for(i=0;i<config->deviceNum;i++)
+	printf("pool->devNum=%d\n",pool->deviceNum);
+	for(i=0;i<pool->deviceNum;i++)
 	{
-		printf("config->device[%d]=%s\n",i,config->device[i]);
+		printf("pool->device[%d]=%s\n",i,pool->device[i]);
 	}
 	
-	for(i=0;i<config->deviceNum;i++)
+	for(i=0;i<pool->deviceNum;i++)
 	{
-		fd[i] = open(config->device[i], O_DIRECT | O_SYNC | O_RDWR); 
+		fd[i] = open(pool->device[i], O_DIRECT | O_SYNC | O_RDWR); 
 		if(fd[i] < 0) 
 		{
 			fprintf(stderr, "Value of errno: %d\n", errno);
-	       		printf("Cannot open\n");
-       			exit(-1);
+	       	printf("Cannot open\n");
+       		exit(-1);
 		}
 	}
 
@@ -92,8 +78,6 @@ void replay(char *configName)
 	}
 	printf("average latency= %Lf\n",(long double)trace->latencySum/(long double)trace->inNum);
 	free(buf);
-	free(config);
-	fclose(trace->logFile);
 	free(trace);
 	free(req);
 }
@@ -218,94 +202,6 @@ static void init_aio()
 	aio_init(&aioParam);
 }
 
-void config_read(struct config_info *config,const char *filename)
-{
-	int name,value;
-	char line[BUFSIZE];
-	char *ptr;
-	FILE *configFile;
-	
-	configFile=fopen(filename,"r");
-	if(configFile==NULL)
-	{
-		printf("error: opening config file\n");
-		exit(-1);
-	}
-	//read config file
-	memset(line,0,sizeof(char)*BUFSIZE);
-	while(fgets(line,sizeof(line),configFile))
-	{
-		if(line[0]=='#'||line[0]==' ') 
-		{
-			continue;
-		}
-       		ptr=strchr(line,'=');
-	        if(!ptr)
-		{
-			continue;
-		} 
-        	name=ptr-line;	//the end of name string+1
-       		value=name+1;	//the start of value string
-	        while(line[name-1]==' ') 
-		{
-			name--;
-		}
-        	line[name]=0;
-
-		if(strcmp(line,"device")==0)
-		{
-			sscanf(line+value,"%s",config->device[config->deviceNum]);
-			config->deviceNum++;
-		}
-		else if(strcmp(line,"trace")==0)
-		{
-			sscanf(line+value,"%s",config->traceFileName);
-		}
-		else if(strcmp(line,"log")==0)
-		{
-			sscanf(line+value,"%s",config->logFileName);
-		}
-		memset(line,0,sizeof(char)*BUFSIZE);
-	}
-	fclose(configFile);
-}
-
-void trace_read(struct config_info *config,struct trace_info *trace)
-{
-	FILE *traceFile;
-	char line[BUFSIZE];
-	struct req_info* req;
-
-	traceFile=fopen(config->traceFileName,"r");
-	req=(struct req_info *)malloc(sizeof(struct req_info));
-	if(traceFile==NULL)
-	{
-		printf("error: opening trace file\n");
-		exit(-1);
-	}
-	//initialize trace file parameters
-	trace->inNum=0;
-	trace->outNum=0;
-	trace->latencySum=0;
-	trace->logFile=fopen(config->logFileName,"w");
-
-	while(fgets(line,sizeof(line),traceFile))
-	{
-		if(strlen(line)==2)
-		{
-			continue;
-		}
-		trace->inNum++;	//track the process of IO requests
-		sscanf(line,"%lf %d %lld %d %d",&req->time,&req->dev,&req->lba,&req->size,&req->type);
-		//push into request queue
-		req->time=req->time*1000;	//ms-->us
-		req->size=req->size*BYTE_PER_BLOCK;
-		req->lba=(req->lba%BLOCK_PER_DRIVE)*BYTE_PER_BLOCK;
-		queue_push(trace,req);
-	}
-	fclose(traceFile);
-}
-
 long long time_now()
 {
 	struct timeval now;
@@ -366,10 +262,11 @@ void queue_pop(struct trace_info *trace,struct req_info *req)
 void queue_print(struct trace_info *trace)
 {
 	struct req_info* temp = trace->front;
+	printf("time pcn lba size type\n");
 	while(temp) 
 	{
 		printf("%lf ",temp->time);
-		printf("%d ",temp->dev);
+		printf("%d ",temp->pcn);
 		printf("%lld ",temp->lba);
 		printf("%d ",temp->size);
 		printf("%d\n",temp->type);

@@ -29,15 +29,9 @@
 #define LARGEST_REQUEST_SIZE	10000  // Largest request size in blocks
 #define BLOCK_PER_DRIVE		3800000	//2GB blocks number
 
-struct config_info{
-	char device[10][64];
-	char traceFileName[64];
-	int  deviceNum;
-	char logFileName[64];
-};
-
 struct req_info{
 	unsigned int pcn;	//physical chk number
+
 	double time;
 	unsigned int dev;
 	long long lba;
@@ -73,9 +67,7 @@ struct aiocb_info{
 };
 
 //replay.c
-void replay(char *configName);
-void config_read(struct config_info *config,const char *filename);
-void trace_read(struct config_info *config,struct trace_info *trace);
+void replay(struct pool_info *pool,struct trace_info *trace);
 long long time_now();
 long long time_elapsed(long long begin);
 static void handle_aio(sigval_t sigval);
