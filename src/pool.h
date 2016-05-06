@@ -229,4 +229,16 @@ void pattern_recognize(struct pool_info *pool);
 //detector.c
 void seq_detect(struct pool_info *pool);
 void stream_flush(struct pool_info *pool);
+//replay.c
+void replay(struct pool_info *pool,struct trace_info *trace);
+long long time_now();
+long long time_elapsed(long long begin);
+void handle_aio(sigval_t sigval);
+void submit_aio(int fd, void *buf,struct req_info *req,struct trace_info *trace);
+void init_aio();
+//queue.c
+void queue_push(struct trace_info *trace,struct req_info *req);
+void queue_pop(struct trace_info *trace,struct req_info *req);
+void queue_print(struct trace_info *trace);
+
 #endif
