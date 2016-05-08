@@ -217,6 +217,7 @@ void queue_push(struct trace_info *trace,struct req_info *req)
 {
 	struct req_info* temp;
 	temp = (struct req_info *)malloc(sizeof(struct req_info));
+	temp->pcn = req->pcn;
 	temp->time = req->time;
 	temp->dev = req->dev;
 	temp->lba = req->lba;
@@ -242,6 +243,7 @@ void queue_pop(struct trace_info *trace,struct req_info *req)
 		printf("Queue is Empty\n");
 		return;
 	}
+	req->pcn  = trace->front->pcn;
 	req->time = trace->front->time;
 	req->dev  = trace->front->dev;
 	req->lba  = trace->front->lba;
@@ -261,14 +263,10 @@ void queue_pop(struct trace_info *trace,struct req_info *req)
 void queue_print(struct trace_info *trace)
 {
 	struct req_info* temp = trace->front;
-	printf("time pcn lba size type\n");
+	FILE *logfile=fopen("queueLog.txt","w");
 	while(temp) 
 	{
-		printf("%lf ",temp->time);
-		printf("%d ",temp->pcn);
-		printf("%lld ",temp->lba);
-		printf("%d ",temp->size);
-		printf("%d\n",temp->type);
+		fprintf(logfile,"%lf %d %lld %d %d\n",temp->time,temp->pcn,temp->lba/512,temp->size/512,temp->type);
 		temp = temp->next;
 	}
 }
