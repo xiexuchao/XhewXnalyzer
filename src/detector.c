@@ -27,8 +27,8 @@ void seq_detect(struct pool_info *pool)
 					break;
 				}
 			}
-		}
-	}
+		}//if
+	}//for
 	if(distribute!=SUCCESS)
 	{
 		for(i=0;i<pool->size_stream;i++)
@@ -47,11 +47,11 @@ void seq_detect(struct pool_info *pool)
 			}
 		}
 	}
-	if(distribute!=SUCCESS)/*Using LRU to kick out a stream*/
+	if(distribute!=SUCCESS)	/*Using LRU to kick out a stream*/
 	{
 		for(i=0;i<pool->size_stream;i++)
 		{
-			if(pool->stream[i].time<min_time)
+			if(pool->stream[i].time < min_time)
 			{
 				min_time=pool->stream[i].time;
 				min_stream=i;
@@ -61,7 +61,7 @@ void seq_detect(struct pool_info *pool)
 		{
 			pool->seq_stream_all++;
 			pool->seq_sum_all+=pool->stream[min_stream].sum;
-			pool->seq_size_all+=(long double)pool->stream[min_stream].size/2048;
+			pool->seq_size_all+=(long double)pool->stream[min_stream].size/2048;	//MB
 			pool->chunk[pool->stream[min_stream].chk_id].seq_stream_all++;
 			pool->chunk[pool->stream[min_stream].chk_id].seq_sum_all+=pool->stream[min_stream].sum;
 			pool->chunk[pool->stream[min_stream].chk_id].seq_size_all+=(long double)pool->stream[min_stream].size/2048;

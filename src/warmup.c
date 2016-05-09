@@ -36,7 +36,7 @@ int warmup(struct pool_info *pool)
 			lba_max=lba;
 		}
 
-		chk_id=(int)(lba/(pool->size_chk*2048));
+		chk_id=(unsigned int)(lba/(pool->size_chk*1024*2));
 		if(pool->record_all[chk_id].accessed==0)
 		{
 			pool->chunk_all++;
@@ -62,7 +62,7 @@ int warmup(struct pool_info *pool)
 		}
 		pool->mapTab[chk_id].pcn=chk_id;
 		pool->revTab[chk_id].lcn=chk_id;
-		if(chk_id<pool->chunk_scm)
+		if(chk_id < pool->chunk_scm)
 		{
 			pool->chunk[chk_id].location=POOL_SCM;
 		}
@@ -76,8 +76,8 @@ int warmup(struct pool_info *pool)
 		}
 		/***************************************/		
 	}
-	pool->chunk_min=(int)(lba_min/(pool->size_chk*1024*2));
-	pool->chunk_max=(int)(lba_max/(pool->size_chk*1024*2));
+	pool->chunk_min=(unsigned int)(lba_min/(pool->size_chk*1024*2));
+	pool->chunk_max=(unsigned int)(lba_max/(pool->size_chk*1024*2));
 	printf("------------------------Chunks: min=%d, max=%d, total=%d, exactly=%d------------------------\n",
 		pool->chunk_min,pool->chunk_max,pool->chunk_max-pool->chunk_min+1,pool->chunk_all);
 

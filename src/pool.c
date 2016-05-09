@@ -100,8 +100,8 @@ void stat_print(struct pool_info *pool)
 	fflush(pool->file_output);
 
 	fprintf(pool->file_output,"\n------------Information of IO Trace------------\n");
-	fprintf(pool->file_output,"%-30s	%Lf\n","Trace start time (s)",(long double)pool->time_start/1000000000);
-	fprintf(pool->file_output,"%-30s	%Lf\n","Trace  end  time (s)",(long double)pool->time_end/1000000000);
+	fprintf(pool->file_output,"%-30s	%Lf\n","Trace start time (Minutes)",(long double)pool->time_start/60000000);
+	fprintf(pool->file_output,"%-30s	%Lf\n","Trace  end  time (Minutes)",(long double)pool->time_end/60000000);
 	fprintf(pool->file_output,"%-30s	%d\n","Num of windows",pool->window_sum);
 	
 	fprintf(pool->file_output,"----IO Request--\n");

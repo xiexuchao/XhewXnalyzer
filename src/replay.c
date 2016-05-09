@@ -1,4 +1,5 @@
 #include "pool.h"
+
 void replay(struct pool_info *pool,struct trace_info *trace)
 {
 	int fd[10];
@@ -11,10 +12,10 @@ void replay(struct pool_info *pool,struct trace_info *trace)
 	alloc_assert(req,"req");
 	memset(req,0,sizeof(struct req_info));
 	
-	//queue_print(trace);
-	//printf("trace->inNum=%d\n",trace->inNum);
-	//printf("trace->outNum=%d\n",trace->outNum);
-	//printf("trace->latencySum=%lld\n",trace->latencySum);
+	queue_print(trace);
+	printf("trace->inNum=%d\n",trace->inNum);
+	printf("trace->outNum=%d\n",trace->outNum);
+	printf("trace->latencySum=%lld\n",trace->latencySum);
 
 	printf("pool->devNum=%d\n",pool->deviceNum);
 	for(i=0;i<pool->deviceNum;i++)
@@ -59,14 +60,31 @@ void replay(struct pool_info *pool,struct trace_info *trace)
 			//usleep(waitTime);
 			nowTime=time_elapsed(initTime);
 		}
-		if(trace->outNum%2==0)
+		/************************************/
+		/************************************
+			replay based on mapping table
+		************************************/
+		if((req->pcn > 0)&&(req->pcn < pool->chunk_scm))
+		{
+			//submit_aio(fd[0],buf,req,trace);
+			/*RAMDisk*/
+			
+		}
+		else if(req->pcn < pool->chunk_scm+pool->chunk_ssd)
 		{
 			submit_aio(fd[0],buf,req,trace);
 		}
-		else
+		else if(req->pcn < pool->chunk_sum)
 		{
 			submit_aio(fd[1],buf,req,trace);
 		}
+		else
+		{
+			printf("Error in mapping table\n");
+			exit(-1);
+		}
+		/************************************/
+		/************************************/
 	}
 	while(trace->inNum > trace->outNum)
 	{
@@ -77,7 +95,6 @@ void replay(struct pool_info *pool,struct trace_info *trace)
 	}
 	printf("average latency= %Lf\n",(long double)trace->latencySum/(long double)trace->inNum);
 	free(buf);
-	free(trace);
 	free(req);
 }
 
@@ -217,12 +234,12 @@ void queue_push(struct trace_info *trace,struct req_info *req)
 {
 	struct req_info* temp;
 	temp = (struct req_info *)malloc(sizeof(struct req_info));
-	temp->pcn = req->pcn;
-	temp->time = req->time;
+	temp->pcn = req->pcn;	//chk number
+	temp->time = req->time;	//us
 	temp->dev = req->dev;
-	temp->lba = req->lba;
-	temp->size = req->size;
-	temp->type = req->type;
+	temp->lba = req->lba;	//bytes
+	temp->size = req->size;	//bytes
+	temp->type = req->type;	//0<->Read
 	temp->next = NULL;
 	if(trace->front == NULL && trace->rear == NULL)
 	{

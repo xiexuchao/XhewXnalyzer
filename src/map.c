@@ -63,7 +63,7 @@ void update_map(struct pool_info *pool,int i)
 			}
 			else //else give up migration
 			{
-				printf("SSD is full now\n");
+				printf("[SCM]-SSD is full now\n");
 				pool->migrate_scm_scm++;
 				pool->chunk[i].location_next=POOL_SCM;
 			}
@@ -81,7 +81,7 @@ void update_map(struct pool_info *pool,int i)
 			}
 			else
 			{
-				printf("HDD is full now\n");
+				printf("[SCM]-HDD is full now\n");
 				pool->migrate_scm_scm++;
 				pool->chunk[i].location_next=POOL_SCM;
 			}
@@ -102,7 +102,7 @@ void update_map(struct pool_info *pool,int i)
 			}
 			else	//else give up migration
 			{
-				printf("SCM is full now\n");
+				printf("[SSD]-SCM is full now\n");
 				pool->migrate_ssd_ssd++;
 				pool->chunk[i].location_next=POOL_SSD;
 			}
@@ -124,7 +124,7 @@ void update_map(struct pool_info *pool,int i)
 			}
 			else //else give up migration
 			{
-				printf("HDD is full now\n");
+				printf("[SSD]-HDD is full now\n");
 				pool->migrate_ssd_ssd++;
 				pool->chunk[i].location_next=POOL_SSD;
 			}
@@ -145,7 +145,7 @@ void update_map(struct pool_info *pool,int i)
 			}
 			else	//else give up migration
 			{
-				printf("SCM is full now\n");
+				printf("[HDD]-SCM is full now\n");
 				pool->migrate_hdd_hdd++;
 				pool->chunk[i].location_next=POOL_HDD;
 			}
@@ -163,7 +163,7 @@ void update_map(struct pool_info *pool,int i)
 			}
 			else
 			{
-				printf("SSD is full now\n");
+				printf("[HDD]-SSD is full now\n");
 				pool->migrate_hdd_hdd++;
 				pool->chunk[i].location_next=POOL_HDD;
 			}
@@ -173,5 +173,4 @@ void update_map(struct pool_info *pool,int i)
 			pool->migrate_hdd_hdd++;
 		}
 	}//else
-
 }//end

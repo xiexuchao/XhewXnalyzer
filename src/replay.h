@@ -12,9 +12,10 @@
 #define BLOCK_PER_DRIVE		3800000	//2GB blocks number
 
 struct req_info{
-	unsigned int pcn;	//physical chk number
-
-	double time;
+/*physical chk number*/
+	unsigned int pcn;	
+	
+	long long time;		//us
 	unsigned int dev;
 	long long lba;
 	unsigned int size;

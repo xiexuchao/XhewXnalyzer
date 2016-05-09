@@ -8,6 +8,7 @@ void pool_run(char *traceName,char *configName,char *outputName,char *logName)
 	/*for trace replayer*/
 	struct trace_info *trace; 
 	struct req_info *req;
+	
 	trace=(struct trace_info *)malloc(sizeof(struct trace_info));
 	alloc_assert(trace,"trace");
 	memset(trace,0,sizeof(struct trace_info));
@@ -35,22 +36,23 @@ void pool_run(char *traceName,char *configName,char *outputName,char *logName)
 
 	while(get_request(pool)!=FAILURE)
 	{
-		/********************************************/
 		chk_id=(int)(pool->req->lba/(pool->size_chk*2048));
+		/********************************************
+				Push into queue to replay
+		********************************************/
 		req->pcn=pool->mapTab[chk_id].pcn;
-		if(req->pcn<0)
+		if(req->pcn < 0)
 		{
 			printf("Error in lcn<->pcn mapping\n");
 			exit(-1);
 		}
-		req->lba=req->pcn*pool->size_chk*2048
-					+pool->req->lba%(pool->size_chk*2014);
+		req->lba=(req->pcn*pool->size_chk*2048)+(pool->req->lba%(pool->size_chk*2048));
 		/**push current IO req to the replay queue**/
 		trace->inNum++;	//track the process of IO requests
-		req->time=pool->req->time;	//us
-		req->lba =pool->req->lba * BYTE_PER_BLOCK;
-		req->size=pool->req->size * BYTE_PER_BLOCK;
-		req->type=pool->req->type;
+		req->time= pool->req->time;	//us
+		req->lba = pool->req->lba * BYTE_PER_BLOCK;
+		req->size= pool->req->size * BYTE_PER_BLOCK;
+		req->type= pool->req->type;
 		queue_push(trace,req);
 		/********************************************/
 
@@ -66,7 +68,8 @@ void pool_run(char *traceName,char *configName,char *outputName,char *logName)
 		}	
 		pool->window_time_end=pool->req->time;			//us
 
-		if(((pool->window_time_end-pool->window_time_start)>=pool->window_size*60*1000*1000)||((feof(pool->file_trace)!=0)&&(pool->window_time_end>0)))
+		if(((pool->window_time_end-pool->window_time_start)>=pool->window_size*60*1000*1000)
+			||((feof(pool->file_trace)!=0)&&(pool->window_time_end>0)))
 		{
 			/*printf("----------------\n");
 			printf("req wind=%d \n",pool->req_in_window);
@@ -108,7 +111,7 @@ void pattern_recognize(struct pool_info *pool)
 	unsigned int i;
 	/*Pattern Detection*/
 	//seconds
-	pool->time_in_window=(long double)(pool->window_time_end-pool->window_time_start)/(long double)1000;
+	pool->time_in_window=(long double)(pool->window_time_end-pool->window_time_start)/(long double)1000000;
 	
 	for(i=pool->chunk_min;i<=pool->chunk_max;i++)
 	{
