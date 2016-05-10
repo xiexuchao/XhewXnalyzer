@@ -72,11 +72,11 @@ void replay(struct pool_info *pool,struct trace_info *trace)
 		}
 		else if(req->pcn < pool->chunk_scm+pool->chunk_ssd)
 		{
-			submit_aio(fd[0],buf,req,trace);
+			//submit_aio(fd[0],buf,req,trace);
 		}
 		else if(req->pcn < pool->chunk_sum)
 		{
-			submit_aio(fd[1],buf,req,trace);
+			//submit_aio(fd[1],buf,req,trace);
 		}
 		else
 		{
