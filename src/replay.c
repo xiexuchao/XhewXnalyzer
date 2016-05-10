@@ -281,9 +281,11 @@ void queue_print(struct trace_info *trace)
 {
 	struct req_info* temp = trace->front;
 	FILE *logfile=fopen("queueLog.txt","w");
-	while(temp) 
+	while(temp->next) 
 	{
 		fprintf(logfile,"%-15lld %-5d %-15lld %-4d %d\n",temp->time,temp->pcn,temp->lba/512,temp->size/512,temp->type);
+        fflush(logfile);
 		temp = temp->next;
 	}
+    fclose(logfile);
 }

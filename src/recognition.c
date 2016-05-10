@@ -83,6 +83,8 @@ void pool_run(char *traceName,char *configName,char *outputName,char *logName)
 		}
 	}//while
 
+//    queue_print(trace);
+
 	stat_print(pool);
 
 	fclose(pool->file_trace);
