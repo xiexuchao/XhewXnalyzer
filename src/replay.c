@@ -128,7 +128,7 @@ void handle_aio(sigval_t sigval)
 		fprintf(stderr, "Warning I/O completed:%db but requested:%ldb\n",
 			count,cb->aiocb->aio_nbytes);
 	}
-	fprintf(cb->trace->logFile,"%-16lf %-12lld %-5d %-2d %d \n",
+	fprintf(cb->trace->logFile,"%-16lld %-12lld %-5d %-2d %d \n",
 				cb->req->time,cb->req->lba,cb->req->size,cb->req->type,latency);
 	fflush(cb->trace->logFile);
 
@@ -283,7 +283,7 @@ void queue_print(struct trace_info *trace)
 	FILE *logfile=fopen("queueLog.txt","w");
 	while(temp) 
 	{
-		fprintf(logfile,"%lf %d %lld %d %d\n",temp->time,temp->pcn,temp->lba/512,temp->size/512,temp->type);
+		fprintf(logfile,"%-15lld %-5d %-15lld %-4d %d\n",temp->time,temp->pcn,temp->lba/512,temp->size/512,temp->type);
 		temp = temp->next;
 	}
 }
