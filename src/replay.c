@@ -68,15 +68,18 @@ void replay(struct pool_info *pool,struct trace_info *trace)
 		{
 			//submit_aio(fd[0],buf,req,trace);
 			/*RAMDisk*/
-			
+            //printf("++++into SCM\n");
+			req->lba=req->lba%(60*2048);
+            submit_aio(fd[0],buf,req,trace);
 		}
 		else if(req->pcn < pool->chunk_scm+pool->chunk_ssd)
 		{
-			//submit_aio(fd[0],buf,req,trace);
+			submit_aio(fd[1],buf,req,trace);
 		}
 		else if(req->pcn < pool->chunk_sum)
 		{
-			//submit_aio(fd[1],buf,req,trace);
+			submit_aio(fd[2],buf,req,trace);
+            //printf("++++into HDD\n");
 		}
 		else
 		{
