@@ -137,7 +137,7 @@ void handle_aio(sigval_t sigval)
 
 	cb->trace->outNum++;
 	//printf("cb->trace->outNum=%d\n",cb->trace->outNum);
-	if(cb->trace->outNum%5==0)
+	if(cb->trace->outNum%50==0)
 	{
 		printf("---has replayed %d\n",cb->trace->outNum);
 	}
