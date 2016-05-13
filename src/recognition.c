@@ -159,18 +159,26 @@ void pattern_recognize(struct pool_info *pool)
 		else
 		{
 			/*Random*/
+            /**********************************************************************
+             *      implement Hierachical Classifier  May 11th, 2016
+             *
+             *      advantage:    can better utilize faster storage pool capacity
+             *      disadvantage: might introduce more data migration operations 
+             *                      (Because inaccurate pattern detection)
+             * ********************************************************************/
 			if(pool->chunk[i].req_sum_all>=(pool->req_in_window/pool->chunk_win)*pool->threshold_intensive)
 			{
+                /*Reaccess*/
 				if(((long double)pool->chunk[i].req_sum_read/(long double)pool->chunk[i].req_sum_all)>=pool->threshold_rw)
 				{
-					/*Active Random Read*/
+					/*Reread*/
 					pool->i_active_rdm_over_r++;
 					pool->chunk[i].pattern=PATTERN_ACTIVE_RDM_OVER_R;
 					pool->chunk[i].location_next=POOL_SSD;
 				}
 				else
 				{
-					/*Active Random Write*/
+					/*Overwritten*/
 					pool->i_active_rdm_over_w++;
 					pool->chunk[i].pattern=PATTERN_ACTIVE_RDM_OVER_W;
 					pool->chunk[i].location_next=POOL_SCM;
@@ -178,16 +186,17 @@ void pattern_recognize(struct pool_info *pool)
 			}
 			else
 			{
+                /*Fully Random <no reaccess>*/
 				if(((long double)pool->chunk[i].req_sum_read/(long double)pool->chunk[i].req_sum_all)>=pool->threshold_rw)
 				{
-					/*Random Less Intensive Read*/
+					/*Fully Random Read*/
 					pool->i_active_rdm_fuly_r++;
 					pool->chunk[i].pattern=PATTERN_ACTIVE_RDM_FULY_R;
 					pool->chunk[i].location_next=POOL_SSD;
 				}
 				else
 				{
-					/*Random Less Intensive Write*/
+					/*Fully Random Write*/
 					pool->i_active_rdm_fuly_w++;
 					pool->chunk[i].pattern=PATTERN_ACTIVE_RDM_FULY_W;
 					pool->chunk[i].location_next=POOL_SSD;
