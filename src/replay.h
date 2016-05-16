@@ -2,14 +2,15 @@
 #define _REPLAY_H
 
 #define BUFSIZE	300
+#define RAMSIZE 60	//size of ramdisk(MB)
 
-#define MEM_ALIGN		512  // Memory alignment
-#define USE_GLOBAL_BUFF		1 
+#define MEM_ALIGN				512  // Memory alignment
+#define USE_GLOBAL_BUFF			1 
 #define AIO_THREAD_POOL_SIZE	50
 
-#define BYTE_PER_BLOCK		512 
+#define BYTE_PER_BLOCK			512 
 #define LARGEST_REQUEST_SIZE	10000  // Largest request size in blocks
-#define BLOCK_PER_DRIVE		3800000	//2GB blocks number
+#define BLOCK_PER_DRIVE			3800000	//2GB blocks number
 
 struct req_info{
 /*physical chk number*/

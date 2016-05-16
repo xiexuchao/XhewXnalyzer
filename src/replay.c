@@ -69,7 +69,7 @@ void replay(struct pool_info *pool,struct trace_info *trace)
 			//submit_aio(fd[0],buf,req,trace);
 			/*RAMDisk*/
             //printf("++++into SCM\n");
-			req->lba=req->lba%(60*2048);
+			req->lba=req->lba%(RAMSIZE*2048);
             submit_aio(fd[0],buf,req,trace);
 		}
 		else if(req->pcn < pool->chunk_scm+pool->chunk_ssd)
