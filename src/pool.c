@@ -148,11 +148,6 @@ void stat_print(struct pool_info *pool)
 	fflush(pool->file_output);
 
 	fprintf(pool->file_output,"\n------------Information of IO Pattern Ratio------------\n");	//IO pattern ratio of each window
-	if(pool->window_sum > SIZE_ARRAY)
-	{
-		pool->window_sum=SIZE_ARRAY;
-	}
-
 	//total pattern ratio
 	temp=0;
 	for(j=0;j<pool->window_sum;j++)
@@ -161,57 +156,93 @@ void stat_print(struct pool_info *pool)
 	}
 	temp2=temp/pool->window_sum;
 
-	fprintf(pool->file_output,"%-30s","[pattern inaccess]");
+	fprintf(pool->file_output,"%-30s","[pattern inactive]");
 	temp=0;
 	for(j=0;j<pool->window_sum;j++)
 	{
 		temp+=pool->pattern_inactive[j];
 	}
 	fprintf(pool->file_output,"%Lf\n",(temp/pool->window_sum)/(1-temp2));
-	fprintf(pool->file_output,"%-30s","[pattern active_seq_r]");
+	
+	fprintf(pool->file_output,"%-30s","[pattern active]");
 	temp=0;
 	for(j=0;j<pool->window_sum;j++)
 	{
-		temp+=pool->pattern_active_seq_r[j];
+		temp+=pool->pattern_active[j];
 	}
 	fprintf(pool->file_output,"%Lf\n",(temp/pool->window_sum)/(1-temp2));
-	fprintf(pool->file_output,"%-30s","[pattern active_seq_w]");
+	
+	fprintf(pool->file_output,"%-30s","[pattern active_r]");
 	temp=0;
 	for(j=0;j<pool->window_sum;j++)
 	{
-		temp+=pool->pattern_active_seq_w[j];
+		temp+=pool->pattern_active_read[j];
 	}
 	fprintf(pool->file_output,"%Lf\n",(temp/pool->window_sum)/(1-temp2));
-	fprintf(pool->file_output,"%-30s","[pattern active_rdm_over_r]");
+	
+	fprintf(pool->file_output,"%-30s","[pattern active_w]");
 	temp=0;
 	for(j=0;j<pool->window_sum;j++)
 	{
-		temp+=pool->pattern_active_rdm_over_r[j];
+		temp+=pool->pattern_active_write[j];
 	}
 	fprintf(pool->file_output,"%Lf\n",(temp/pool->window_sum)/(1-temp2));
-	fprintf(pool->file_output,"%-30s","[pattern active_rdm_over_w]");
+	
+	fprintf(pool->file_output,"%-30s","[pattern active_r_seq]");
 	temp=0;
 	for(j=0;j<pool->window_sum;j++)
 	{
-		temp+=pool->pattern_active_rdm_over_w[j];
+		temp+=pool->pattern_active_r_seq[j];
 	}
 	fprintf(pool->file_output,"%Lf\n",(temp/pool->window_sum)/(1-temp2));
-	fprintf(pool->file_output,"%-30s","[pattern active_rdm_fuly_r]");
+	
+	fprintf(pool->file_output,"%-30s","[pattern active_r_rdm]");
 	temp=0;
 	for(j=0;j<pool->window_sum;j++)
 	{
-		temp+=pool->pattern_active_rdm_fuly_r[j];
+		temp+=pool->pattern_active_r_rdm[j];
 	}
 	fprintf(pool->file_output,"%Lf\n",(temp/pool->window_sum)/(1-temp2));
-	fprintf(pool->file_output,"%-30s","[pattern active_rdm_fuly_w]");
+	
+	fprintf(pool->file_output,"%-30s","[pattern active_w_seq]");
 	temp=0;
 	for(j=0;j<pool->window_sum;j++)
 	{
-		temp+=pool->pattern_active_rdm_fuly_w[j];
+		temp+=pool->pattern_active_w_seq[j];
+	}
+	fprintf(pool->file_output,"%Lf\n",(temp/pool->window_sum)/(1-temp2));
+	
+	fprintf(pool->file_output,"%-30s","[pattern active_w_rdm]");
+	temp=0;
+	for(j=0;j<pool->window_sum;j++)
+	{
+		temp+=pool->pattern_active_w_rdm[j];
+	}
+	fprintf(pool->file_output,"%Lf\n",(temp/pool->window_sum)/(1-temp2));
+	
+	fprintf(pool->file_output,"%-30s","[pattern active_w_rdm_over]");
+	temp=0;
+	for(j=0;j<pool->window_sum;j++)
+	{
+		temp+=pool->pattern_active_w_rdm_over[j];
+	}
+	fprintf(pool->file_output,"%Lf\n",(temp/pool->window_sum)/(1-temp2));
+	
+	fprintf(pool->file_output,"%-30s","[pattern active_w_rdm_fuly]");
+	temp=0;
+	for(j=0;j<pool->window_sum;j++)
+	{
+		temp+=pool->pattern_active_w_rdm_fuly[j];
 	}
 	fprintf(pool->file_output,"%Lf\n",(temp/pool->window_sum)/(1-temp2));
 
+	/********************************/
 	//pattern ratio in each window
+	if(pool->window_sum > SIZE_ARRAY)
+	{
+		pool->window_sum=SIZE_ARRAY;
+	}
+
 	fprintf(pool->file_output,"%-22s","[noaccess]");
 	for(j=0;j<pool->window_sum;j++)
 	{
@@ -224,40 +255,58 @@ void stat_print(struct pool_info *pool)
 		fprintf(pool->file_output,"%lf ",pool->pattern_inactive[j]);
 	}
 	fprintf(pool->file_output,"\n");
-	fprintf(pool->file_output,"%-22s","[active_seq_r]");
+	fprintf(pool->file_output,"%-22s","[active]");
 	for(j=0;j<pool->window_sum;j++)
 	{
-		fprintf(pool->file_output,"%lf ",pool->pattern_active_seq_r[j]);
+		fprintf(pool->file_output,"%lf ",pool->pattern_active[j]);
 	}
 	fprintf(pool->file_output,"\n");
-	fprintf(pool->file_output,"%-22s","[active_seq_w]");
+	fprintf(pool->file_output,"%-22s","[active_r]");
 	for(j=0;j<pool->window_sum;j++)
 	{
-		fprintf(pool->file_output,"%lf ",pool->pattern_active_seq_w[j]);
+		fprintf(pool->file_output,"%lf ",pool->pattern_active_read[j]);
 	}
 	fprintf(pool->file_output,"\n");
-	fprintf(pool->file_output,"%-22s","[active_rdm_over_r]");
+	fprintf(pool->file_output,"%-22s","[active_w]");
 	for(j=0;j<pool->window_sum;j++)
 	{
-		fprintf(pool->file_output,"%lf ",pool->pattern_active_rdm_over_r[j]);
+		fprintf(pool->file_output,"%lf ",pool->pattern_active_write[j]);
 	}
 	fprintf(pool->file_output,"\n");
-	fprintf(pool->file_output,"%-22s","[active_rdm_over_w]");
+	fprintf(pool->file_output,"%-22s","[active_r_seq]");
 	for(j=0;j<pool->window_sum;j++)
 	{
-		fprintf(pool->file_output,"%lf ",pool->pattern_active_rdm_over_w[j]);
+		fprintf(pool->file_output,"%lf ",pool->pattern_active_r_seq[j]);
 	}
 	fprintf(pool->file_output,"\n");
-	fprintf(pool->file_output,"%-22s","[active_rdm_fuly_r]");
+	fprintf(pool->file_output,"%-22s","[active_r_rdm]");
 	for(j=0;j<pool->window_sum;j++)
 	{
-		fprintf(pool->file_output,"%lf ",pool->pattern_active_rdm_fuly_r[j]);
+		fprintf(pool->file_output,"%lf ",pool->pattern_active_r_rdm[j]);
 	}
 	fprintf(pool->file_output,"\n");
-	fprintf(pool->file_output,"%-22s","[active_rdm_fuly_w]");
+	fprintf(pool->file_output,"%-22s","[active_w_seq]");
 	for(j=0;j<pool->window_sum;j++)
 	{
-		fprintf(pool->file_output,"%lf ",pool->pattern_active_rdm_fuly_w[j]);
+		fprintf(pool->file_output,"%lf ",pool->pattern_active_w_seq[j]);
+	}
+	fprintf(pool->file_output,"\n");
+	fprintf(pool->file_output,"%-22s","[active_w_rdm]");
+	for(j=0;j<pool->window_sum;j++)
+	{
+		fprintf(pool->file_output,"%lf ",pool->pattern_active_w_rdm[j]);
+	}
+	fprintf(pool->file_output,"\n");
+	fprintf(pool->file_output,"%-22s","[active_w_rdm_over]");
+	for(j=0;j<pool->window_sum;j++)
+	{
+		fprintf(pool->file_output,"%lf ",pool->pattern_active_w_rdm_over[j]);
+	}
+	fprintf(pool->file_output,"\n");
+	fprintf(pool->file_output,"%-22s","[active_w_rdm_fuly]");
+	for(j=0;j<pool->window_sum;j++)
+	{
+		fprintf(pool->file_output,"%lf ",pool->pattern_active_w_rdm_fuly[j]);
 	}
 	fprintf(pool->file_output,"\n");
 	fflush(pool->file_output);

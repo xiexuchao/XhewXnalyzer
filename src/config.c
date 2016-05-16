@@ -154,12 +154,15 @@ void initialize(struct pool_info *pool,char *trace,char *output,char *log)
 
 	pool->i_noaccess=0;
 	pool->i_inactive=0;
-	pool->i_active_seq_r=0;
-	pool->i_active_seq_w=0;
-	pool->i_active_rdm_over_r=0;
-	pool->i_active_rdm_over_w=0;
-	pool->i_active_rdm_fuly_r=0;
-	pool->i_active_rdm_fuly_w=0;
+	pool->i_active=0;
+	pool->i_active_r=0;
+	pool->i_active_w=0;
+	pool->i_active_r_s=0;
+	pool->i_active_r_m=0;
+	pool->i_active_w_s=0;
+	pool->i_active_w_m=0;
+	pool->i_active_w_m_f=0;
+	pool->i_active_w_m_o=0;
 
     for(i=0;i<SIZE_ARRAY;i++)
     {
@@ -167,12 +170,15 @@ void initialize(struct pool_info *pool,char *trace,char *output,char *log)
 
         pool->pattern_noaccess[i]=0;
         pool->pattern_inactive[i]=0;
-        pool->pattern_active_seq_r[i]=0;
-		pool->pattern_active_seq_w[i]=0;
-        pool->pattern_active_rdm_over_r[i]=0;
-		pool->pattern_active_rdm_over_w[i]=0;
-        pool->pattern_active_rdm_fuly_r[i]=0;
-		pool->pattern_active_rdm_fuly_w[i]=0;
+        pool->pattern_active[i]=0;
+		pool->pattern_active_read[i]=0;
+        pool->pattern_active_write[i]=0;
+		pool->pattern_active_r_seq[i]=0;
+        pool->pattern_active_r_rdm[i]=0;
+		pool->pattern_active_w_seq[i]=0;
+		pool->pattern_active_w_rdm[i]=0;
+        pool->pattern_active_w_rdm_fuly[i]=0;
+		pool->pattern_active_w_rdm_over[i]=0;
     }
 
 	strcpy(pool->filename_trace,trace);

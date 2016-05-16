@@ -38,18 +38,22 @@
 
 //IO Patterns
 #define PATTERN_UNKNOWN						' '
-
+//LEVEL 1
 #define PATTERN_NOACCESS					'_'	
 #define PATTERN_INACTIVE					'I'
+#defien PATTERN_ACTIVE						'A'
+//LEVEL 2
+#define PATTERN_ACTIVE_READ					'R'
+#define PATTERN_ACTIVE_WRITE				'W'
+//LEVEL 3
+#define PATTERN_ACTIVE_R_SEQ				'S'
+#define PATTERN_ACTIVE_R_RDM				'M'
+#define PATTERN_ACTIVE_W_SEQ				's'
+#define PATTERN_ACTIVE_W_RDM				'm'
+//LEVEL 4
+#define PATTERN_ACTIVE_W_RDM_OVER			'O'
+#define PATTERN_ACTIVE_W_RDM_FULY			'F'
 
-#define PATTERN_ACTIVE_SEQ_R				'S'
-#define PATTERN_ACTIVE_SEQ_W				's'
-
-#define PATTERN_ACTIVE_RDM_OVER_R			'R'
-#define PATTERN_ACTIVE_RDM_OVER_W			'W'
-
-#define PATTERN_ACTIVE_RDM_FULY_W			'r'
-#define PATTERN_ACTIVE_RDM_FULY_R			'w'
 
 struct pool_info{
 	/*For Storage Pool*/   
@@ -123,36 +127,50 @@ struct pool_info{
 	long double  time_in_window;
 
 	/*
+//LEVEL 1
 #define PATTERN_NOACCESS					'_'	
 #define PATTERN_INACTIVE					'I'
-#define PATTERN_ACTIVE_SEQ_R				'S'
-#define PATTERN_ACTIVE_SEQ_W				's'
-#define PATTERN_ACTIVE_RDM_OVER_R			'R'
-#define PATTERN_ACTIVE_RDM_OVER_W			'W'
-#define PATTERN_ACTIVE_RDM_FULY_W			'r'
-#define PATTERN_ACTIVE_RDM_FULY_R			'w'
+#defien PATTERN_ACTIVE						'A'
+//LEVEL 2
+#define PATTERN_ACTIVE_READ					'R'
+#define PATTERN_ACTIVE_WRITE				'W'
+//LEVEL 3
+#define PATTERN_ACTIVE_R_SEQ				'S'
+#define PATTERN_ACTIVE_R_RDM				'M'
+#define PATTERN_ACTIVE_W_SEQ				's'
+#define PATTERN_ACTIVE_W_RDM				'm'
+//LEVEL 4
+#define PATTERN_ACTIVE_W_RDM_FULY			'F'
+#define PATTERN_ACTIVE_W_RDM_OVER			'O'
 	*/
 
 	double i_noaccess;
 	double i_inactive;
-	double i_active_seq_r;
-	double i_active_seq_w;
-	double i_active_rdm_over_r;
-	double i_active_rdm_over_w;
-	double i_active_rdm_fuly_r;
-	double i_active_rdm_fuly_w;
+	double i_active;
+	double i_active_r;
+	double i_active_w;
+	double i_active_r_s;
+	double i_active_r_m;
+	double i_active_w_s;
+	double i_active_w_m;
+	double i_active_w_m_o;
+	double i_active_w_m_f;
 
     unsigned int chunk_access[SIZE_ARRAY];
 
     char   buffer[SIZE_BUFFER];
+	
     double pattern_noaccess[SIZE_ARRAY];
 	double pattern_inactive[SIZE_ARRAY];
-    double pattern_active_seq_r[SIZE_ARRAY];
-	double pattern_active_seq_w[SIZE_ARRAY];
-    double pattern_active_rdm_over_r[SIZE_ARRAY];
-	double pattern_active_rdm_over_w[SIZE_ARRAY];
-    double pattern_active_rdm_fuly_r[SIZE_ARRAY];
-	double pattern_active_rdm_fuly_w[SIZE_ARRAY];
+	double pattern_active[SIZE_ARRAY];
+    double pattern_active_read[SIZE_ARRAY];
+	double pattern_active_write[SIZE_ARRAY];
+    double pattern_active_r_seq[SIZE_ARRAY];
+	double pattern_active_r_rdm[SIZE_ARRAY];
+    double pattern_active_w_seq[SIZE_ARRAY];
+	double pattern_active_w_rdm[SIZE_ARRAY];
+	double pattern_active_w_rdm_over[SIZE_ARRAY];
+	double pattern_active_w_rdm_fuly[SIZE_ARRAY];
 
     char filename_trace[100];
     char filename_output[100];
@@ -237,7 +255,8 @@ int find_free(struct pool_info *pool,int type);
 void update_map(struct pool_info *pool,int i);
 //recognition.c
 void pool_run(char *trace,char *config,char *output,char *log);
-void pattern_recognize(struct pool_info *pool);
+void pattern_recognize_static(struct pool_info *pool);
+void pattern_recognize_dynamic(struct pool_info *pool);
 //detector.c
 void seq_detect(struct pool_info *pool);
 void stream_flush(struct pool_info *pool);
