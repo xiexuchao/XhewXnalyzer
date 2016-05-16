@@ -41,7 +41,7 @@
 //LEVEL 1
 #define PATTERN_NOACCESS					'_'	
 #define PATTERN_INACTIVE					'I'
-#defien PATTERN_ACTIVE						'A'
+#define PATTERN_ACTIVE						'A'
 //LEVEL 2
 #define PATTERN_ACTIVE_READ					'R'
 #define PATTERN_ACTIVE_WRITE				'W'
