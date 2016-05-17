@@ -64,22 +64,21 @@ void replay(struct pool_info *pool,struct trace_info *trace)
 		/************************************
 			replay based on mapping table
 		************************************/
-		if((req->pcn > 0)&&(req->pcn < pool->chunk_scm))
+		if((req->pcn >= 0)&&(req->pcn < pool->chunk_scm))
 		{
-			//submit_aio(fd[0],buf,req,trace);
 			/*RAMDisk*/
-            //printf("++++into SCM\n");
 			req->lba=req->lba%(RAMSIZE*2048);
             submit_aio(fd[0],buf,req,trace);
 		}
 		else if(req->pcn < pool->chunk_scm+pool->chunk_ssd)
 		{
+			req->lba=req->lba-20*1024*1024*2;
 			submit_aio(fd[1],buf,req,trace);
 		}
 		else if(req->pcn < pool->chunk_sum)
 		{
+			req->lba=(req->lba-220*1024*1024*2)%(500*1024*1024*2);
 			submit_aio(fd[2],buf,req,trace);
-            //printf("++++into HDD\n");
 		}
 		else
 		{
