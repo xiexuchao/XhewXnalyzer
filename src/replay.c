@@ -88,8 +88,14 @@ void replay(struct pool_info *pool,struct trace_info *trace)
 		/************************************/
 		/************************************/
 	}
+    i=0;
 	while(trace->inNum > trace->outNum)
 	{
+        i++;
+        if(i>100)
+        {
+            break;
+        }
 		printf("trace->inNum=%d\n",trace->inNum);
 		printf("trace->outNum=%d\n",trace->outNum);
 		printf("begin sleepping 1 second------\n");
@@ -136,7 +142,7 @@ void handle_aio(sigval_t sigval)
 
 	cb->trace->outNum++;
 	//printf("cb->trace->outNum=%d\n",cb->trace->outNum);
-	if(cb->trace->outNum%50==0)
+	if(cb->trace->outNum%10000==0)
 	{
 		printf("---has replayed %d\n",cb->trace->outNum);
 	}
