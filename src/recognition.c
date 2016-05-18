@@ -778,7 +778,7 @@ void pattern_recognize_iops(struct pool_info *pool)
 	
 	for(i=0;i<100000;i++)
 	{
-		weight[i]=i;
+		weight[i]=0;
 		num[i]=i;
 	}
 	
@@ -797,7 +797,7 @@ void pattern_recognize_iops(struct pool_info *pool)
 		printf("++%d %d\n",weight[i],num[i]);
 	}
 	/*get the sorted chunk sequence base on IOPS*/
-	bubble_sort(weight,pool->chunk_sum);
+	bubble_sort(weight,num,pool->chunk_sum);
 	for(i=0;i<50;i++)
 	{
 		printf("--%d %d\n",weight[i],num[i]);
