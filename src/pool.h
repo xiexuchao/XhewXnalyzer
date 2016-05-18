@@ -256,6 +256,7 @@ void update_map(struct pool_info *pool,int i);
 //recognition.c
 void pool_run_static(char *trace,char *config,char *output,char *log);
 void pool_run_dynamic(char *trace,char *config,char *output,char *log);
+void pool_run_iops(char *traceName,char *configName,char *outputName,char *logName);
 void pattern_recognize_static(struct pool_info *pool);
 void pattern_recognize_dynamic(struct pool_info *pool);
 void bubble_sort(unsigned int a[],unsigned int b[],int n);

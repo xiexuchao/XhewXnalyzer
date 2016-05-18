@@ -218,6 +218,116 @@ void pool_run_dynamic(char *traceName,char *configName,char *outputName,char *lo
 	free(pool);
 }
 
+void pool_run_iops(char *traceName,char *configName,char *outputName,char *logName)
+{
+	unsigned int chk_id;
+	struct pool_info *pool;
+
+	/*for trace replayer*/
+	struct trace_info *trace; 
+	struct req_info *req;
+	
+	trace=(struct trace_info *)malloc(sizeof(struct trace_info));
+	alloc_assert(trace,"trace");
+	memset(trace,0,sizeof(struct trace_info));
+	
+	req=(struct req_info *)malloc(sizeof(struct req_info));
+	alloc_assert(req,"req");
+	memset(req,0,sizeof(struct req_info));
+
+	pool=(struct pool_info *)malloc(sizeof(struct pool_info));
+	alloc_assert(pool,"pool");
+	memset(pool,0,sizeof(struct pool_info));
+
+	load_parameters(pool,configName);
+	initialize(pool,traceName,outputName,logName);
+	warmup(pool);
+
+	/***************************/
+	//initialize trace parameters
+	//trace here is a list of I/O requests pending to replay
+	trace->inNum=0;
+	trace->outNum=0;
+	trace->latencySum=0;
+	trace->logFile=fopen(pool->logFileName,"w");
+	/***************************/
+
+	while(get_request(pool)!=FAILURE)
+	{
+		chk_id=(int)(pool->req->lba/(pool->size_chk*2048));
+		/********************************************
+				Push into queue to replay
+		********************************************/
+		req->pcn=pool->mapTab[chk_id].pcn;
+		if(req->pcn < 0)
+		{
+			printf("Error in lcn<->pcn mapping\n");
+			exit(-1);
+		}
+		/****************************************************************************
+				recalculate the lba of each I/O request based on mapping
+		*****************************************************************************/
+		req->lba=(req->pcn*pool->size_chk*2048)+(pool->req->lba%(pool->size_chk*2048));
+		/**push current IO req to the replay queue**/
+		trace->inNum++;	//track the process of IO requests
+		req->time= pool->req->time;	//us
+		req->lba = pool->req->lba * BYTE_PER_BLOCK;
+		req->size= pool->req->size * BYTE_PER_BLOCK;
+		req->type= pool->req->type;
+		queue_push(trace,req);
+		/********************************************/
+
+		seq_detect(pool);	//Sequential IO Detection
+		stat_update(pool);
+
+		//update window info
+		pool->size_in_window+=pool->req->size;
+		pool->req_in_window++;
+		if(pool->req_in_window==1)
+		{
+			pool->window_time_start=pool->req->time;	//us
+		}	
+		pool->window_time_end=pool->req->time;			//us
+
+		if(((pool->window_time_end-pool->window_time_start)>=pool->window_size*60*1000*1000)
+			||((feof(pool->file_trace)!=0)&&(pool->window_time_end>0)))
+		{
+			/*printf("----------------\n");
+			printf("req wind=%d \n",pool->req_in_window);
+			printf("req time=%lld \n",pool->req->time);
+			printf("beg time=%lld \n",pool->window_time_start);
+			printf("end time=%lld \n",pool->window_time_end);
+			printf("win time=%lld \n",pool->window_time_end-pool->window_time_start);*/
+
+			stream_flush(pool);
+			pattern_recognize_iops(pool);
+		}
+	}//while
+
+	stat_print(pool);
+
+	fclose(pool->file_trace);
+	fclose(pool->file_output);
+	fclose(pool->file_log);
+
+	free(pool->mapTab);
+	free(pool->revTab);
+	free(pool->chunk);
+	free(pool->req);
+	free(pool->stream);
+	free(pool->record_win);
+	free(pool->record_all);
+
+	/**start replay**/
+	replay(pool,trace);
+	free(req);
+	free(trace);
+	/****************/
+
+	free(pool);
+}
+
+
 void pattern_recognize_static(struct pool_info *pool)
 {
 	unsigned int i;
