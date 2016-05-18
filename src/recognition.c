@@ -608,3 +608,194 @@ void pattern_recognize_dynamic(struct pool_info *pool)
 	printf("pool->chunk_win=%d\n",pool->chunk_win);
 	pool->chunk_win=0;
 }
+
+/****************************************
+			Bubble Sort
+****************************************/
+void bubble_sort(unsigned int a[],unsigned int b[],int n)
+{
+	int i,j;
+	int flag=0;
+	int temp,temp1;
+	j=n;
+	printf("[5] bubble sorting....\n");
+	while(flag==0)
+	{
+		flag=1;
+		for(i=0;i<n;i++)
+		{
+			for(j=i+1;j<n;j++)
+			{
+				if(a[i]<a[j])
+				{
+					//sort base on weight
+					temp=a[j];
+					a[j]=a[i];
+					a[i]=temp;
+					//record initial sequence
+					temp1=b[j];
+					b[j]=b[i];
+					b[i]=temp1;
+					
+					flag=0;
+				}
+			}//for
+		}//for
+	}//while
+}
+int find_num(unsigned int a[],int n)
+{
+	int i;
+	for(i=0;i<100000;i++)
+	{
+		if(a[i] == n)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+/**********************************************************************
+*       							IOPS only
+*      							weight = f(IOPS)
+* ********************************************************************/
+
+void pattern_recognize_iops(struct pool_info *pool)
+{
+	unsigned int i,m;
+	unsigned int weight[100000];	//IOPS only
+	unsigned int num[100000];	
+	
+	for(i=0;i<100000;i++)
+	{
+		weight[i]=i;
+		num[i]=i;
+	}
+	
+	/*Pattern Detection*/
+	pool->time_in_window=(long double)(pool->window_time_end-pool->window_time_start)/(long double)1000000;
+	
+	for(i=pool->chunk_min;i<=pool->chunk_max;i++)
+	{
+		pool->chunk[i].location=pool->chunk[i].location_next;
+		
+		weight[i]=pool->chunk[i].req_sum_all;		
+	}
+	
+	for(i=0;i<50;i++)
+	{
+		printf("++%d %d\n",weight[i],num[i]);
+	}
+	/*get the sorted chunk sequence base on IOPS*/
+	bubble_sort(weight,pool->chunk_sum);
+	for(i=0;i<50;i++)
+	{
+		printf("--%d %d\n",weight[i],num[i]);
+	}
+	
+	for(i=pool->chunk_min;i<=pool->chunk_max;i++)
+	{
+		m=find_num(num,i);
+		if(m == -1)
+		{
+			printf("Error in IOPS only \n");
+			exit(-1);
+		}
+		//tier-by-tier migration in chunk level
+		if(pool->chunk[i].location == POOL_SCM)
+		{
+			if(m < pool->chunk_scm)
+			{
+				pool->chunk[i].location_next=POOL_SCM;
+			}
+			else
+			{
+				pool->chunk[i].location_next=POOL_SSD;
+			}
+		}
+		if(pool->chunk[i].location == POOL_SSD)
+		{
+			if(m < pool->chunk_scm)
+			{
+				pool->chunk[i].location_next=POOL_SCM;
+			}
+			else if(m < pool->chunk_scm + pool->chunk_ssd)
+			{
+				pool->chunk[i].location_next=POOL_SSD;
+			}
+			else
+			{
+				pool->chunk[i].location_next=POOL_HDD;
+			}
+		}
+		if(pool->chunk[i].location == POOL_HDD)
+		{
+			if(m < pool->chunk_scm + pool->chunk_ssd)
+			{
+				pool->chunk[i].location_next=POOL_SSD;
+			}
+			else
+			{
+				pool->chunk[i].location_next=POOL_HDD;
+			}
+		}
+	}//for
+		
+	for(i=pool->chunk_min;i<=pool->chunk_max;i++)
+	{		
+		/************************************
+			update mapping information
+		*************************************/
+		update_map(pool,i);
+		//print_log(pool,i);	//print info of each chunk in this window to log file.
+		/*Initialize the statistics in each chunk*/
+		pool->chunk[i].req_sum_all=0;
+		pool->chunk[i].req_sum_read=0;
+		pool->chunk[i].req_sum_write=0;
+		pool->chunk[i].req_size_all=0;
+		pool->chunk[i].req_size_read=0;
+		pool->chunk[i].req_size_write=0;
+
+		pool->chunk[i].seq_sum_all=0;
+		pool->chunk[i].seq_sum_read=0;
+		pool->chunk[i].seq_sum_write=0;
+		pool->chunk[i].seq_size_all=0;
+		pool->chunk[i].seq_size_read=0;
+		pool->chunk[i].seq_size_write=0;
+
+		pool->chunk[i].seq_stream_all=0;
+		pool->chunk[i].seq_stream_read=0;
+		pool->chunk[i].seq_stream_write=0;		
+	}//for
+
+	/*Update the pool info*/
+	pool->window_sum++;
+	if(pool->window_sum%100==0)
+	{
+		printf("------------pool->window_sum=%d---------------\n",pool->window_sum);
+	}
+	pool->window_time_start=0;
+	pool->window_time_end=0;
+
+	/*Start a new window*/
+	pool->size_in_window=0;
+	pool->req_in_window=0;
+	pool->time_in_window=0;
+
+	pool->i_noaccess=0;
+	pool->i_inactive=0;
+	pool->i_active=0;
+	pool->i_active_r=0;
+	pool->i_active_w=0;
+	pool->i_active_r_s=0;
+	pool->i_active_r_m=0;
+	pool->i_active_w_s=0;
+	pool->i_active_w_m=0;
+	pool->i_active_w_m_f=0;
+	pool->i_active_w_m_o=0;
+
+	//accessed chunks in each window
+	memset(pool->record_win,0,sizeof(struct record_info)*pool->chunk_sum);
+	printf("pool->chunk_win=%d\n",pool->chunk_win);
+	pool->chunk_win=0;
+}

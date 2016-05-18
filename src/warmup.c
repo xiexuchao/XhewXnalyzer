@@ -65,14 +65,17 @@ int warmup(struct pool_info *pool)
 		if(chk_id < pool->chunk_scm)
 		{
 			pool->chunk[chk_id].location=POOL_SCM;
+			pool->chunk[chk_id].location_next=POOL_SCM;
 		}
 		else if(chk_id < pool->chunk_scm+pool->chunk_ssd)
 		{
 			pool->chunk[chk_id].location=POOL_SSD;
+			pool->chunk[chk_id].location_next=POOL_SSD;
 		}
 		else
 		{
 			pool->chunk[chk_id].location=POOL_HDD;
+			pool->chunk[chk_id].location_next=POOL_HDD;
 		}
 		/***************************************/		
 	}
