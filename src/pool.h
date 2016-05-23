@@ -260,6 +260,7 @@ void pool_run_iops(char *traceName,char *configName,char *outputName,char *logNa
 void pattern_recognize_static(struct pool_info *pool);
 void pattern_recognize_dynamic(struct pool_info *pool);
 void bubble_sort(unsigned int a[],unsigned int b[],int n);
+int find_num(unsigned int a[],int n);
 void pattern_recognize_iops(struct pool_info *pool);
 
 

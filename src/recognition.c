@@ -36,7 +36,7 @@ void pool_run_static(char *traceName,char *configName,char *outputName,char *log
 
 	while(get_request(pool)!=FAILURE)
 	{
-		chk_id=(int)(pool->req->lba/(pool->size_chk*2048));
+		chk_id=(unsigned int)(pool->req->lba/(pool->size_chk*2048));
 		/********************************************
 				Push into queue to replay
 		********************************************/
@@ -53,7 +53,7 @@ void pool_run_static(char *traceName,char *configName,char *outputName,char *log
 		/**push current IO req to the replay queue**/
 		trace->inNum++;	//track the process of IO requests
 		req->time= pool->req->time;	//us
-		req->lba = pool->req->lba * BYTE_PER_BLOCK;
+		req->lba = req->lba * BYTE_PER_BLOCK;
 		req->size= pool->req->size * BYTE_PER_BLOCK;
 		req->type= pool->req->type;
 		queue_push(trace,req);
@@ -162,7 +162,7 @@ void pool_run_dynamic(char *traceName,char *configName,char *outputName,char *lo
 		/**push current IO req to the replay queue**/
 		trace->inNum++;	//track the process of IO requests
 		req->time= pool->req->time;	//us
-		req->lba = pool->req->lba * BYTE_PER_BLOCK;
+		req->lba = req->lba * BYTE_PER_BLOCK;
 		req->size= pool->req->size * BYTE_PER_BLOCK;
 		req->type= pool->req->type;
 		queue_push(trace,req);
@@ -271,7 +271,7 @@ void pool_run_iops(char *traceName,char *configName,char *outputName,char *logNa
 		/**push current IO req to the replay queue**/
 		trace->inNum++;	//track the process of IO requests
 		req->time= pool->req->time;	//us
-		req->lba = pool->req->lba * BYTE_PER_BLOCK;
+		req->lba = req->lba * BYTE_PER_BLOCK; //after mapping
 		req->size= pool->req->size * BYTE_PER_BLOCK;
 		req->type= pool->req->type;
 		queue_push(trace,req);
@@ -327,7 +327,6 @@ void pool_run_iops(char *traceName,char *configName,char *outputName,char *logNa
 	free(pool);
 }
 
-
 void pattern_recognize_static(struct pool_info *pool)
 {
 	unsigned int i;
@@ -335,7 +334,7 @@ void pattern_recognize_static(struct pool_info *pool)
 	pool->time_in_window=(long double)(pool->window_time_end-pool->window_time_start)/(long double)1000000;
 	
 	/*Pattern Detection*/
-	for(i=pool->chunk_min;i<=pool->chunk_max;i++)
+	for(i=0;i<pool->chunk_sum;i++)
 	{
 		pool->chunk[i].pattern_last=pool->chunk[i].pattern;
 		pool->chunk[i].location=pool->chunk[i].location_next;
@@ -498,7 +497,7 @@ void pattern_recognize_dynamic(struct pool_info *pool)
 	pool->time_in_window=(long double)(pool->window_time_end-pool->window_time_start)/(long double)1000000;
 	
 	/*1st Level in Hierachical Classifier*/
-	for(i=pool->chunk_min;i<=pool->chunk_max;i++)
+	for(i=0;i<pool->chunk_sum;i++)
 	{
 		pool->chunk[i].pattern_last=pool->chunk[i].pattern;
 		pool->chunk[i].location=pool->chunk[i].location_next;
@@ -532,7 +531,7 @@ void pattern_recognize_dynamic(struct pool_info *pool)
 	if(pool->i_active > pool->chunk_scm)//if SCM can hold all active chks or not
 	{
 		/*2nd Level in Hierachical Classifier*/
-		for(i=pool->chunk_min;i<=pool->chunk_max;i++)
+		for(i=0;i<pool->chunk_sum;i++)
 		{
 			//move inactive chunks to HDD
 			if(pool->chunk[i].pattern==PATTERN_INACTIVE)
@@ -567,7 +566,7 @@ void pattern_recognize_dynamic(struct pool_info *pool)
 		if((pool->i_active+pool->i_active_r+pool->i_active_w) > (pool->chunk_scm+pool->chunk_ssd))
 		{
 			/*3rd Level in Hierachical Classifier*/
-			for(i=pool->chunk_min;i<=pool->chunk_max;i++)
+			for(i=0;i<pool->chunk_sum;i++)
 			{
 				if(pool->chunk[i].pattern==PATTERN_ACTIVE_READ)
 				{
@@ -615,7 +614,7 @@ void pattern_recognize_dynamic(struct pool_info *pool)
 			if(pool->i_active_w_m > pool->chunk_scm)
 			{
 				/*4th Level in Hierachical Classifier*/
-				for(i=pool->chunk_min;i<=pool->chunk_max;i++)
+				for(i=0;i<pool->chunk_sum;i++)
 				{
 					if(pool->chunk[i].pattern==PATTERN_ACTIVE_W_RDM)
 					{
@@ -642,7 +641,7 @@ void pattern_recognize_dynamic(struct pool_info *pool)
 		}//if
 	}//if
 		
-	for(i=pool->chunk_min;i<=pool->chunk_max;i++)
+	for(i=0;i<pool->chunk_sum;i++)
 	{		
 		/************************************
 			update mapping information
@@ -766,10 +765,9 @@ int find_num(unsigned int a[],int n)
 	return -1;
 }
 /**********************************************************************
-*       							IOPS only
-*      							weight = f(IOPS)
+*       					IOPS only
+*      					weight = func(IOPS)
 * ********************************************************************/
-
 void pattern_recognize_iops(struct pool_info *pool)
 {
 	unsigned int i,m;
@@ -785,7 +783,7 @@ void pattern_recognize_iops(struct pool_info *pool)
 	/*Pattern Detection*/
 	pool->time_in_window=(long double)(pool->window_time_end-pool->window_time_start)/(long double)1000000;
 	
-	for(i=pool->chunk_min;i<=pool->chunk_max;i++)
+	for(i=0;i<pool->chunk_sum;i++)
 	{
 		pool->chunk[i].location=pool->chunk[i].location_next;
 		
@@ -803,7 +801,7 @@ void pattern_recognize_iops(struct pool_info *pool)
 		printf("--%d %d\n",weight[i],num[i]);
 	}
 	
-	for(i=pool->chunk_min;i<=pool->chunk_max;i++)
+	for(i=0;i<pool->chunk_sum;i++)
 	{
 		m=find_num(num,i);
 		if(m == -1)
@@ -851,7 +849,7 @@ void pattern_recognize_iops(struct pool_info *pool)
 		}
 	}//for
 		
-	for(i=pool->chunk_min;i<=pool->chunk_max;i++)
+	for(i=0;i<pool->chunk_sum;i++)
 	{		
 		/************************************
 			update mapping information

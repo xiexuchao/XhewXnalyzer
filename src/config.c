@@ -233,8 +233,21 @@ void initialize(struct pool_info *pool,char *trace,char *output,char *log)
 		//chunk-level statistic
         pool->chunk[i].pattern=PATTERN_UNKNOWN;
         pool->chunk[i].pattern_last=PATTERN_UNKNOWN;
-		pool->chunk[i].location=POOL_HDD;		//******************
-        pool->chunk[i].location_next=POOL_HDD;	//might need to review
+		if(i < pool->chunk_scm)
+		{
+			pool->chunk[i].location=POOL_SCM;
+			pool->chunk[i].location_next=POOL_SCM;
+		}
+		else if(i < pool->chunk_scm+pool->chunk_ssd)
+		{
+			pool->chunk[i].location=POOL_SSD;
+			pool->chunk[i].location_next=POOL_SSD;
+		}
+		else
+		{
+			pool->chunk[i].location=POOL_HDD;
+			pool->chunk[i].location_next=POOL_HDD;
+		}
 
         pool->chunk[i].req_sum_all=0;
         pool->chunk[i].req_sum_read=0;

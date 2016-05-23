@@ -32,7 +32,6 @@ int get_request(struct pool_info *pool)
 	return SUCCESS;
 } 
 
-
 void stat_update(struct pool_info *pool)
 {
 	unsigned int chk_id=(unsigned int)(pool->req->lba/(pool->size_chk*2048));
@@ -313,7 +312,7 @@ void stat_print(struct pool_info *pool)
 
 	fprintf(pool->file_output,"\n------------Information of IO Pattern in Each Window------------\n");
 	fprintf(pool->file_output,"%-7s	%s\n","CHUNK_ID","PATTERN_HISTORY");
-	for(i=pool->chunk_min;i<=pool->chunk_max;i++)
+	for(i=0;i<pool->chunk_sum;i++)
 	{
 		if(pool->record_all[i].accessed!=0)
 		{
