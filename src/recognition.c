@@ -907,7 +907,3 @@ void pattern_recognize_iops(struct pool_info *pool)
 	printf("pool->chunk_win=%d\n",pool->chunk_win);
 	pool->chunk_win=0;
 }
-/**********************************************************************
-*       					  IOPS + Throughput
-*      					weight = func(IOPS,Throughput)
-* ********************************************************************/
