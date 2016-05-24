@@ -18,7 +18,7 @@ int main()
 	pool_run_dynamic("trace/hadoop10.ascii","config/config_hadoop10D.ini","result/hadoop10d.txt","log.txt");
 	pool_run_dynamic("trace/backup1.ascii","config/config_backup1D.ini","result/backup1d.txt","log.txt"); */
 	
-	pool_run_iops("trace/11.ascii","config.ini","result/11.txt","log.txt");
+	pool_run_iops("trace/11.ascii","config/config.ini","result/stat_11.txt","result/log_11.txt");
 	
 	//printf("%s\n",path_i);
 	//printf("%s\n",path_o);

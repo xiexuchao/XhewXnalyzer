@@ -99,7 +99,6 @@ void pool_run_static(char *traceName,char *configName,char *outputName,char *log
 
 	fclose(pool->file_trace);
 	fclose(pool->file_output);
-	fclose(pool->file_log);
 
 	free(pool->mapTab);
 	free(pool->revTab);
@@ -113,6 +112,7 @@ void pool_run_static(char *traceName,char *configName,char *outputName,char *log
 			Replay I/O Trace Based on the Mapping Information
 	********************************************************************/
 	replay(pool,trace);
+	fclose(trace->logFile);
 	free(req);
 	free(trace);
 
@@ -203,7 +203,6 @@ void pool_run_dynamic(char *traceName,char *configName,char *outputName,char *lo
 
 	fclose(pool->file_trace);
 	fclose(pool->file_output);
-	fclose(pool->file_log);
 
 	free(pool->mapTab);
 	free(pool->revTab);
@@ -215,6 +214,7 @@ void pool_run_dynamic(char *traceName,char *configName,char *outputName,char *lo
 
 	/**start replay**/
 	replay(pool,trace);
+	fclose(trace->logFile);
 	free(req);
 	free(trace);
 	/****************/
@@ -306,7 +306,6 @@ void pool_run_iops(char *traceName,char *configName,char *outputName,char *logNa
 
 	fclose(pool->file_trace);
 	fclose(pool->file_output);
-	fclose(pool->file_log);
 
 	free(pool->mapTab);
 	free(pool->revTab);
@@ -318,13 +317,13 @@ void pool_run_iops(char *traceName,char *configName,char *outputName,char *logNa
 
 	/**start replay**/
 	replay(pool,trace);
+	fclose(trace->logFile);
 	free(req);
 	free(trace);
 	/****************/
 
 	free(pool);
 }
-
 
 void pool_run_iopsth(char *traceName,char *configName,char *outputName,char *logName)
 {
@@ -410,7 +409,6 @@ void pool_run_iopsth(char *traceName,char *configName,char *outputName,char *log
 
 	fclose(pool->file_trace);
 	fclose(pool->file_output);
-	fclose(pool->file_log);
 
 	free(pool->mapTab);
 	free(pool->revTab);
@@ -422,6 +420,7 @@ void pool_run_iopsth(char *traceName,char *configName,char *outputName,char *log
 
 	/**start replay**/
 	replay(pool,trace);
+	fclose(trace->logFile);
 	free(req);
 	free(trace);
 	/****************/
@@ -473,7 +472,6 @@ void pool_run_fcfs(char *traceName,char *configName,char *outputName,char *logNa
 
 	fclose(pool->file_trace);
 	fclose(pool->file_output);
-	fclose(pool->file_log);
 
 	free(pool->mapTab);
 	free(pool->revTab);
@@ -485,6 +483,7 @@ void pool_run_fcfs(char *traceName,char *configName,char *outputName,char *logNa
 
 	/**start replay**/
 	replay(pool,trace);
+	fclose(trace->logFile);
 	free(req);
 	free(trace);
 	/****************/

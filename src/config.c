@@ -87,10 +87,6 @@ void load_parameters(struct pool_info *pool,char *config)
 			sscanf(buf+value,"%s",pool->device[pool->deviceNum]);
 			pool->deviceNum++;
 		}
-		else if(strcmp(buf,"replay log")==0)
-		{
-			sscanf(buf+value,"%s",pool->logFileName);
-		}
         memset(buf,0,sizeof(char)*SIZE_BUFFER);
     }
     fclose(pool->file_config);
@@ -183,11 +179,10 @@ void initialize(struct pool_info *pool,char *trace,char *output,char *log)
 
 	strcpy(pool->filename_trace,trace);
     strcpy(pool->filename_output,output);
-    strcpy(pool->filename_log,log);
+    strcpy(pool->logFileName,log);
     pool->file_trace=fopen(pool->filename_trace,"r");
     pool->file_output=fopen(pool->filename_output,"w");
-    pool->file_log=fopen(pool->filename_log,"w");
-
+    
 	pool->mapTab=(struct map_info *)malloc(sizeof(struct map_info)*pool->chunk_sum);
 	alloc_assert(pool->mapTab,"pool->mapTab");
 	memset(pool->mapTab,0,sizeof(struct map_info));

@@ -175,11 +175,10 @@ struct pool_info{
     char filename_trace[100];
     char filename_output[100];
     char filename_config[100];
-    char filename_log[100];
+    //char filename_log[100];
     FILE *file_trace;
     FILE *file_output;
     FILE *file_config;
-    FILE *file_log;
 
 	//for replay engine
 	char device[10][64];
