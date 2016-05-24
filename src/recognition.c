@@ -450,7 +450,6 @@ void pool_run_fcfs(char *traceName,char *configName,char *outputName,char *logNa
 
 	load_parameters(pool,configName);
 	initialize(pool,traceName,outputName,logName);
-	warmup(pool);
 
 	trace->inNum=0;
 	trace->outNum=0;
@@ -459,6 +458,8 @@ void pool_run_fcfs(char *traceName,char *configName,char *outputName,char *logNa
 	
 	while(get_request(pool)!=FAILURE)
 	{
+		pool->req_sum_all++;
+		
 		req->init_lba = pool->req->lba;
 		trace->inNum++;	
 		req->time= pool->req->time;	//us
@@ -467,8 +468,6 @@ void pool_run_fcfs(char *traceName,char *configName,char *outputName,char *logNa
 		req->type= pool->req->type;
 		queue_push(trace,req);
 	}//while
-
-	stat_print(pool);
 
 	fclose(pool->file_trace);
 	fclose(pool->file_output);
