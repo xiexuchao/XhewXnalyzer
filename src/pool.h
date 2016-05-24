@@ -253,16 +253,21 @@ void alloc_assert(void *p,char *s);
 //map.c
 int find_free(struct pool_info *pool,int type);
 void update_map(struct pool_info *pool,int i);
+
 //recognition.c
 void pool_run_static(char *trace,char *config,char *output,char *log);
 void pool_run_dynamic(char *trace,char *config,char *output,char *log);
 void pool_run_iops(char *traceName,char *configName,char *outputName,char *logName);
+void pool_run_iopsth(char *traceName,char *configName,char *outputName,char *logName);
+void pool_run_fcfs(char *traceName,char *configName,char *outputName,char *logName);
+
 void pattern_recognize_static(struct pool_info *pool);
 void pattern_recognize_dynamic(struct pool_info *pool);
-void bubble_sort(unsigned int a[],unsigned int b[],int n);
-int find_num(unsigned int a[],int n);
 void pattern_recognize_iops(struct pool_info *pool);
+void pattern_recognize_iopsth(struct pool_info *pool);
 
+void bubble_sort(unsigned int a[],unsigned int b[],int n);
+int  find_num(unsigned int a[],int n);
 
 //detector.c
 void seq_detect(struct pool_info *pool);

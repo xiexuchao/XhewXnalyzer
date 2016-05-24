@@ -19,6 +19,7 @@ struct req_info{
 	long long time;		//us
 	unsigned int dev;
 	long long lba;
+	long long init_lba;
 	unsigned int size;
 	unsigned int type;
 	struct req_info *next;
