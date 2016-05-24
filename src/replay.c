@@ -196,6 +196,7 @@ void submit_aio(int fd, void *buf, struct req_info *req,struct trace_info *trace
 	}
 
 	cb->req->init_lba=req->init_lba;
+	cb->req->pcn = req->pcn;
 	//cb->req=req;	//WTF
 	cb->req->time=req->time;
 	cb->req->dev=req->dev;
@@ -249,11 +250,11 @@ void queue_push(struct trace_info *trace,struct req_info *req)
 {
 	struct req_info* temp;
 	temp = (struct req_info *)malloc(sizeof(struct req_info));
+	temp->init_lba = req->init_lba;
 	temp->pcn = req->pcn;	//chk number
 	temp->time = req->time;	//us
 	temp->dev = req->dev;
 	temp->lba = req->lba;	//bytes
-	temp->init_lba = req->init_lba;
 	temp->size = req->size;	//bytes
 	temp->type = req->type;	//0<->Read
 	temp->next = NULL;
@@ -276,11 +277,11 @@ void queue_pop(struct trace_info *trace,struct req_info *req)
 		printf("Queue is Empty\n");
 		return;
 	}
+	req->init_lba  = trace->front->init_lba;
 	req->pcn  = trace->front->pcn;
 	req->time = trace->front->time;
 	req->dev  = trace->front->dev;
 	req->lba  = trace->front->lba;
-	req->init_lba  = trace->front->init_lba;
 	req->size = trace->front->size;
 	req->type = trace->front->type;	
 	if(trace->front == trace->rear) 
