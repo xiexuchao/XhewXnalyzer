@@ -136,8 +136,9 @@ void handle_aio(sigval_t sigval)
 		fprintf(stderr, "Warning I/O completed:%db but requested:%ldb\n",
 			count,cb->aiocb->aio_nbytes);
 	}
-	fprintf(cb->trace->logFile,"%-16lld %-12lld %-5d %-2d %d \n",
-				cb->req->time,cb->req->lba,cb->req->size,cb->req->type,latency);
+	/**[Time, Origial_LBA, Real_LBA, Size, Type, Latency]**/
+	fprintf(cb->trace->logFile,"%-16lld %-12lld %-12lld %-5d %-2d %d \n",
+				cb->req->time,cb->req->init_lba,cb->req->lba,cb->req->size,cb->req->type,latency);
 	fflush(cb->trace->logFile);
 
 	cb->trace->outNum++;
