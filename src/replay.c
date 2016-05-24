@@ -12,7 +12,7 @@ void replay(struct pool_info *pool,struct trace_info *trace)
 	alloc_assert(req,"req");
 	memset(req,0,sizeof(struct req_info));
 	
-	queue_print(trace);
+	//queue_print(trace);
 	printf("trace->inNum=%d\n",trace->inNum);
 	printf("trace->outNum=%d\n",trace->outNum);
 	printf("trace->latencySum=%lld\n",trace->latencySum);
@@ -97,7 +97,7 @@ void replay(struct pool_info *pool,struct trace_info *trace)
 	while(trace->inNum > trace->outNum)
 	{
         i++;
-        if(i>100)
+        if(i>30)
         {
             break;
         }
