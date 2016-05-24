@@ -49,6 +49,11 @@ void replay(struct pool_info *pool,struct trace_info *trace)
 
 	initTime=time_now();
 	//printf("initTime=%lld\n",initTime);
+	
+	fprintf(trace->logFile,"%-16s %-12s %-5s %-12s %-5s %-5s %s \n",
+			"Time","LBA","PCN","LBA","Size","Type","Latency");
+	fflush(trace->logFile);
+	
 	while(trace->front)
 	{
 		queue_pop(trace,req);
@@ -137,8 +142,8 @@ void handle_aio(sigval_t sigval)
 			count,cb->aiocb->aio_nbytes);
 	}
 	/**[Time, Origial_LBA, Real_LBA, Size, Type, Latency]**/
-	fprintf(cb->trace->logFile,"%-16lld %-12lld %-12lld %-5d %-2d %d \n",
-				cb->req->time,cb->req->init_lba,cb->req->lba,cb->req->size,cb->req->type,latency);
+	fprintf(cb->trace->logFile,"%-16lld %-12lld %-5d %-12lld %-5d %-5d %d \n",
+				cb->req->time,cb->req->init_lba,cb->req->pcn,cb->req->lba/512,cb->req->size/512,cb->req->type,latency);
 	fflush(cb->trace->logFile);
 
 	cb->trace->outNum++;
