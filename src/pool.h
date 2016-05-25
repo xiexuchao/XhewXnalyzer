@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
-#include <sys/time.h>
+//#include <time.h>
+//#include <sys/time.h>
 #include <aio.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -14,13 +14,12 @@
 #include <linux/fs.h>
 #include <errno.h>
 #include <pthread.h>
-//#include <signal.h>
-//#include <sys/types.h>
-//#include <sys/stat.h>
 
 #include "detector.h"
 #include "migration.h"
 #include "replay.h"
+#include "utils/timer.h"
+#include "utils/queue.h"
 
 #define SUCCESS		0
 #define FAILURE		1
@@ -273,14 +272,11 @@ void seq_detect(struct pool_info *pool);
 void stream_flush(struct pool_info *pool);
 //replay.c
 void replay(struct pool_info *pool,struct trace_info *trace);
-inline long long time_now();
-inline long long time_elapsed(long long begin);
+//inline long long time_now();
+//inline long long time_elapsed(long long begin);
 void handle_aio(sigval_t sigval);
 void submit_aio(int fd, void *buf,struct req_info *req,struct trace_info *trace);
 void init_aio();
-//queue.c
-void queue_push(struct trace_info *trace,struct req_info *req);
-void queue_pop(struct trace_info *trace,struct req_info *req);
-void queue_print(struct trace_info *trace);
+
 
 #endif
