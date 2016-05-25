@@ -1,7 +1,7 @@
 DIR_SRC = ./src
 DIR_OBJ = ./obj
 
-SRC = $(wildcard ${DIR_SRC}/*.c)
+SRC = $(wildcard ${DIR_SRC}/*.c) $(wildcard ${DIR_SRC}/utils/*.c)
 DIR = $(notdir ${SRC})
 OBJ = $(patsubst %.c,${DIR_OBJ}/%.o,$(notdir ${SRC}))
 
@@ -14,6 +14,8 @@ ${TARGET}:${OBJ}
 	@$(CC) $(OBJ) -o $@ -lrt
 
 ${DIR_OBJ}/%.o:${DIR_SRC}/%.c
+	@$(CC) $(CFLAGS) -c $< -o $@ -lrt
+${DIR_OBJ}/%.o:${DIR_SRC}/utils/%.c
 	@$(CC) $(CFLAGS) -c $< -o $@ -lrt
 
 .PHONY:all clean

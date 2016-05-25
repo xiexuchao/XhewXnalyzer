@@ -1,4 +1,4 @@
-
+#include "timer.h"
 inline long long time_now()
 {
 	struct timeval now;
