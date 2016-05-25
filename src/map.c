@@ -3,7 +3,7 @@
 /*
 	return PCN that free in pool type
 */
-static int find_free(struct pool_info *pool,int type)
+int find_free(struct pool_info *pool,int type)
 {
 	unsigned int i;
 	if(type==POOL_SCM)

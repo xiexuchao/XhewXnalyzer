@@ -498,7 +498,7 @@ void pool_run_fcfs(char *traceName,char *configName,char *outputName,char *logNa
 *	3. Weight = func(IOPS Only)
 *	4. Weight = func(IOPS & Throughput)
 ****************************************************************************************/
-static void pattern_recognize_static(struct pool_info *pool)
+void pattern_recognize_static(struct pool_info *pool)
 {
 	unsigned int i;
 	//seconds
@@ -660,7 +660,7 @@ static void pattern_recognize_static(struct pool_info *pool)
 *      disadvantage: might introduce more data migration operations 
 *                      (Because inaccurate pattern detection)
 * ********************************************************************/
-static void pattern_recognize_dynamic(struct pool_info *pool)
+void pattern_recognize_dynamic(struct pool_info *pool)
 {
 	unsigned int i;
 	/*Pattern Detection*/
@@ -892,7 +892,7 @@ static void pattern_recognize_dynamic(struct pool_info *pool)
 /**********************************************
 *				 Bubble Sort
 ***********************************************/
-static void bubble_sort(unsigned int a[],unsigned int b[],int n)
+void bubble_sort(unsigned int a[],unsigned int b[],int n)
 {
 	int i,j;
 	int flag=0;
@@ -923,7 +923,7 @@ static void bubble_sort(unsigned int a[],unsigned int b[],int n)
 		}//for
 	}//while
 }
-static int find_num(unsigned int a[],int n)
+int find_num(unsigned int a[],int n)
 {
 	int i;
 	for(i=0;i<100000;i++)
@@ -940,7 +940,7 @@ static int find_num(unsigned int a[],int n)
 *       					IOPS only
 *      					weight = func(IOPS)
 * ********************************************************************/
-static void pattern_recognize_iops(struct pool_info *pool)
+void pattern_recognize_iops(struct pool_info *pool)
 {
 	unsigned int i,m;
 	unsigned int weight[100000];	//IOPS only
@@ -1074,7 +1074,7 @@ static void pattern_recognize_iops(struct pool_info *pool)
 *       					  IOPS + Throughput
 *      					weight = func(IOPS,Throughput)
 * ********************************************************************/
-static void pattern_recognize_iopsth(struct pool_info *pool)
+void pattern_recognize_iopsth(struct pool_info *pool)
 {
 	unsigned int i,m;
 	unsigned int weight[100000];	//IOPS only

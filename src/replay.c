@@ -111,7 +111,7 @@ void replay(struct pool_info *pool,struct trace_info *trace)
 	free(req);
 }
 
-static void handle_aio(sigval_t sigval)
+void handle_aio(sigval_t sigval)
 {
 	struct aiocb_info *cb;
 	int latency;
@@ -157,7 +157,7 @@ static void handle_aio(sigval_t sigval)
 	free(cb);
 }
 
-static void submit_aio(int fd, void *buf, struct req_info *req,struct trace_info *trace)
+void submit_aio(int fd, void *buf, struct req_info *req,struct trace_info *trace)
 {
 	struct aiocb_info *cb;
 	char *buf_new;
@@ -223,7 +223,7 @@ static void submit_aio(int fd, void *buf, struct req_info *req,struct trace_info
 	}
 }
 
-static void init_aio()
+void init_aio()
 {
 	struct aioinit aioParam={0};
 	//memset(aioParam,0,sizeof(struct aioinit));
@@ -234,14 +234,14 @@ static void init_aio()
 	aio_init(&aioParam);
 }
 
-static inline long long time_now()
+inline long long time_now()
 {
 	struct timeval now;
 	gettimeofday(&now,NULL);
 	return 1000000*now.tv_sec+now.tv_usec;	//us
 }
 
-static inline long long time_elapsed(long long begin)
+inline long long time_elapsed(long long begin)
 {
 	return time_now()-begin;	//us
 }
