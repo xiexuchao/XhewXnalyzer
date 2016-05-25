@@ -1,3 +1,4 @@
+#include "queue.h"
 void queue_push(struct trace_info *trace,struct req_info *req)
 {
 	struct req_info* temp;
