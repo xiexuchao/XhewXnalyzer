@@ -250,34 +250,34 @@ void stat_update(struct pool_info *pool);
 void stat_print(struct pool_info *pool);
 void alloc_assert(void *p,char *s);
 //map.c
-int find_free(struct pool_info *pool,int type);
+static int find_free(struct pool_info *pool,int type);
 void update_map(struct pool_info *pool,int i);
 
 //recognition.c
-void pool_run_static(char *trace,char *config,char *output,char *log);
-void pool_run_dynamic(char *trace,char *config,char *output,char *log);
-void pool_run_iops(char *traceName,char *configName,char *outputName,char *logName);
-void pool_run_iopsth(char *traceName,char *configName,char *outputName,char *logName);
-void pool_run_fcfs(char *traceName,char *configName,char *outputName,char *logName);
+static void pool_run_static(char *trace,char *config,char *output,char *log);
+static void pool_run_dynamic(char *trace,char *config,char *output,char *log);
+static void pool_run_iops(char *traceName,char *configName,char *outputName,char *logName);
+static void pool_run_iopsth(char *traceName,char *configName,char *outputName,char *logName);
+static void pool_run_fcfs(char *traceName,char *configName,char *outputName,char *logName);
 
 void pattern_recognize_static(struct pool_info *pool);
 void pattern_recognize_dynamic(struct pool_info *pool);
 void pattern_recognize_iops(struct pool_info *pool);
 void pattern_recognize_iopsth(struct pool_info *pool);
 
-void bubble_sort(unsigned int a[],unsigned int b[],int n);
-int  find_num(unsigned int a[],int n);
+static void bubble_sort(unsigned int a[],unsigned int b[],int n);
+static int  find_num(unsigned int a[],int n);
 
 //detector.c
 void seq_detect(struct pool_info *pool);
 void stream_flush(struct pool_info *pool);
 //replay.c
 void replay(struct pool_info *pool,struct trace_info *trace);
-long long time_now();
-long long time_elapsed(long long begin);
-void handle_aio(sigval_t sigval);
-void submit_aio(int fd, void *buf,struct req_info *req,struct trace_info *trace);
-void init_aio();
+static inline long long time_now();
+static inline long long time_elapsed(long long begin);
+static void handle_aio(sigval_t sigval);
+static void submit_aio(int fd, void *buf,struct req_info *req,struct trace_info *trace);
+static void init_aio();
 //queue.c
 void queue_push(struct trace_info *trace,struct req_info *req);
 void queue_pop(struct trace_info *trace,struct req_info *req);
